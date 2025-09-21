@@ -1,104 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CareerAI</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f8f9fa; }
-    header {
-      background: white; padding: 15px 30px; display: flex;
-      justify-content: space-between; align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .logo { font-size: 24px; font-weight: bold; color: #007bff; }
-    nav { display: flex; align-items: center; gap: 20px; position: relative; }
-    nav a { text-decoration: none; color: #333; font-size: 16px; }
-    .btn {
-      padding: 8px 16px; background: #007bff; color: white;
-      border: none; border-radius: 5px; cursor: pointer;
-    }
-    .btn:hover { background: #0056b3; }
-    .user-menu { position: relative; display: inline-block; }
-    .user-menu img {
-      width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
-    }
-    .dropdown {
-      display: none; position: absolute; right: 0; margin-top: 10px;
-      background: white; border: 1px solid #ddd; border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 220px; z-index: 10;
-    }
-    .dropdown p { margin: 10px; font-size: 14px; color: #333; }
-    .dropdown button {
-      width: 100%; padding: 10px; border: none; background: none;
-      cursor: pointer; text-align: left; font-size: 14px;
-    }
-    .dropdown button:hover { background: #f0f0f0; }
-    /* Auth modal */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
-    }
-    .modal-content {
-      background: white; padding: 20px; border-radius: 8px;
-      width: 300px; text-align: center;
-    }
-    .modal-content input {
-      width: 90%; padding: 10px; margin: 10px 0;
-      border: 1px solid #ddd; border-radius: 5px;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header>
-    <div class="logo">CareerAI</div>
-    <nav>
-      <a href="#">Features</a>
-      <a href="#">Pricing</a>
-      <a href="#">FAQ</a>
-      <button id="loginBtn" class="btn">Login</button>
-      <button id="signupBtn" class="btn">Sign Up</button>
-      <div class="user-menu" id="userMenu" style="display:none;">
-        <img id="userPic" src="" alt="Profile">
-        <div class="dropdown" id="dropdownMenu">
-          <p id="userName"></p>
-          <p id="userEmail"></p>
-          <button id="accountBtn">My Account</button>
-          <button id="logoutBtn">Logout</button>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Navbar -->
+  <header class="bg-white shadow sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="text-2xl font-extrabold text-blue-600">CareerAI</a>
+      <nav class="flex items-center gap-6">
+        <a href="resume.html" class="text-gray-700 hover:text-blue-600">Resume Maker</a>
+        <a id="navLogin" href="login.html" class="px-4 py-2 border rounded text-sm">Sign in</a>
+        <a id="navSignup" href="signup.html" class="px-4 py-2 bg-blue-600 text-white rounded text-sm">Sign up</a>
+
+        <!-- Profile menu -->
+        <div id="navUser" class="relative hidden">
+          <button id="navUserBtn" class="flex items-center gap-2">
+            <img id="navUserPic" src="https://via.placeholder.com/40" class="w-9 h-9 rounded-full" alt="user">
+          </button>
+          <div id="navDropdown" class="hidden absolute right-0 mt-3 w-48 bg-white rounded shadow p-2">
+            <div class="px-3 py-2 text-sm" id="navUserInfo">User</div>
+            <button id="navLogout" class="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded">Logout</button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   </header>
 
-  <section class="hero">
-    <h1>🚀 Land Your Dream Job with AI</h1>
-    <p>Your all-in-one AI-powered career co-pilot: resumes, interviews, skill growth, job tracking, and more.</p>
-    <button class="btn">Start Free Today</button>
-    <p>⚡ Early Bird Offer: 70% Off First 100 Users</p>
-  </section>
+  <!-- Hero -->
+  <main class="max-w-6xl mx-auto px-6 py-16">
+    <h1 class="text-5xl font-extrabold mb-4">🚀 Land Your Dream Job with AI</h1>
+    <p class="text-gray-700 text-lg mb-6">Your AI-powered career co-pilot: resumes, interviews, skills, and more.</p>
+    <a href="signup.html" class="px-8 py-4 bg-blue-600 text-white rounded-lg shadow">Start Free Today</a>
+  </main>
 
-  <!-- Auth Modal -->
-  <div class="modal" id="authModal">
-    <div class="modal-content">
-      <h2 id="modalTitle">Login</h2>
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="password" placeholder="Password">
-      <button id="authActionBtn" class="btn">Login</button>
-      <p>or</p>
-      <button id="googleLoginBtn" class="btn">Continue with Google</button>
-      <br><br>
-      <button id="closeModal" class="btn" style="background:#6c757d;">Close</button>
-    </div>
-  </div>
-
-  <!-- Firebase -->
+  <!-- Firebase Auth -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-             GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, setDoc, doc } 
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
@@ -112,89 +55,30 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
 
-    // UI elements
-    const loginBtn = document.getElementById("loginBtn");
-    const signupBtn = document.getElementById("signupBtn");
-    const authModal = document.getElementById("authModal");
-    const modalTitle = document.getElementById("modalTitle");
-    const authActionBtn = document.getElementById("authActionBtn");
-    const googleLoginBtn = document.getElementById("googleLoginBtn");
-    const closeModal = document.getElementById("closeModal");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const userMenu = document.getElementById("userMenu");
-    const userPic = document.getElementById("userPic");
-    const userName = document.getElementById("userName");
-    const userEmail = document.getElementById("userEmail");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    const logoutBtn = document.getElementById("logoutBtn");
+    const navLogin = document.getElementById('navLogin');
+    const navSignup = document.getElementById('navSignup');
+    const navUser = document.getElementById('navUser');
+    const navUserPic = document.getElementById('navUserPic');
+    const navUserBtn = document.getElementById('navUserBtn');
+    const navDropdown = document.getElementById('navDropdown');
+    const navUserInfo = document.getElementById('navUserInfo');
+    const navLogout = document.getElementById('navLogout');
 
-    let isSignup = false;
+    navUserBtn.addEventListener('click', () => navDropdown.classList.toggle('hidden'));
+    navLogout.addEventListener('click', async () => { await signOut(auth); location.reload(); });
 
-    // Show modal
-    loginBtn.onclick = () => { isSignup = false; modalTitle.textContent = "Login"; authActionBtn.textContent = "Login"; authModal.style.display = "flex"; };
-    signupBtn.onclick = () => { isSignup = true; modalTitle.textContent = "Sign Up"; authActionBtn.textContent = "Sign Up"; authModal.style.display = "flex"; };
-    closeModal.onclick = () => authModal.style.display = "none";
-
-    // Auth action
-    authActionBtn.onclick = async () => {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      try {
-        if (isSignup) {
-          const userCred = await createUserWithEmailAndPassword(auth, email, password);
-          await setDoc(doc(db, "users", userCred.user.uid), {
-            email: userCred.user.email,
-            createdAt: new Date()
-          });
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-        }
-        authModal.style.display = "none";
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // Google login
-    googleLoginBtn.onclick = async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        await setDoc(doc(db, "users", result.user.uid), {
-          name: result.user.displayName,
-          email: result.user.email,
-          photo: result.user.photoURL
-        }, { merge: true });
-        authModal.style.display = "none";
-      } catch (err) {
-        alert(err.message);
-      }
-    };
-
-    // Logout
-    logoutBtn.onclick = async () => await signOut(auth);
-
-    // Dropdown toggle
-    userPic.onclick = () => {
-      dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-    };
-
-    // Track auth state
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        loginBtn.style.display = "none";
-        signupBtn.style.display = "none";
-        userMenu.style.display = "inline-block";
-        userPic.src = user.photoURL || "https://via.placeholder.com/38";
-        userName.textContent = user.displayName || "User";
-        userEmail.textContent = user.email;
+        navLogin.style.display = 'none';
+        navSignup.style.display = 'none';
+        navUser.style.display = 'block';
+        navUserPic.src = user.photoURL || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.displayName || "User");
+        navUserInfo.textContent = user.displayName || user.email;
       } else {
-        loginBtn.style.display = "inline-block";
-        signupBtn.style.display = "inline-block";
-        userMenu.style.display = "none";
+        navLogin.style.display = 'inline-block';
+        navSignup.style.display = 'inline-block';
+        navUser.style.display = 'none';
       }
     });
   </script>
