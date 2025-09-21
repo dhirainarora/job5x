@@ -1,118 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareerAI</title>
-  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <!-- Header -->
-  <header class="flex items-center justify-between p-6 bg-white shadow-md sticky top-0 z-50">
-    <h1 class="text-2xl font-extrabold text-blue-700">CareerAI</h1>
-    <nav class="space-x-6 font-medium flex items-center">
-      <a href="#features" class="hover:text-blue-600 transition">Features</a>
-      <a href="#pricing" class="hover:text-blue-600 transition">Pricing</a>
-      <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
-      <button id="login-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Sign in with Google</button>
-      <button id="logout-btn" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Logout</button>
-    </nav>
-  </header>
+<body class="bg-gray-50 text-gray-900">
 
-  <!-- Hero -->
-  <section class="text-center py-28 bg-gradient-to-r from-blue-100 to-blue-200">
-    <h2 class="text-6xl font-extrabold mb-6 text-gray-900">🚀 Land Your Dream Job with AI</h2>
-    <p class="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center px-8 py-4 bg-white shadow">
+    <h1 class="text-2xl font-bold text-blue-600">CareerAI</h1>
+    <div class="flex items-center gap-6">
+      <a href="#" class="hover:text-blue-600">Features</a>
+      <a href="#" class="hover:text-blue-600">Pricing</a>
+      <a href="#" class="hover:text-blue-600">FAQ</a>
+      <button id="loginBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Sign in with Google</button>
+      <button id="logoutBtn" class="hidden px-4 py-2 bg-gray-300 rounded-lg">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="text-center py-16 bg-gradient-to-r from-blue-50 to-blue-100">
+    <h2 class="text-4xl font-bold mb-4">🚀 Land Your Dream Job with AI</h2>
+    <p class="text-lg text-gray-700 max-w-2xl mx-auto">
       Your all-in-one AI-powered career co-pilot: resumes, interviews, skill growth, job tracking, and more.
     </p>
-    <button class="px-12 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg rounded-xl">
+    <button class="mt-6 px-6 py-3 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700">
       Start Free Today
     </button>
-    <p class="mt-4 text-sm text-gray-600 font-medium">⚡ Early Bird Offer: 70% Off First 100 Users</p>
+    <p class="mt-4 text-sm text-gray-600">⚡ Early Bird Offer: 70% Off First 100 Users</p>
   </section>
 
-  <!-- Dashboard -->
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-5xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-6">Welcome, <span id="user-name">Guest</span></h2>
-      <img id="user-pic" class="mx-auto rounded-full w-20 h-20 hidden" />
-      <p id="user-email" class="text-gray-600"></p>
+  <!-- Features -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 px-8 py-16">
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
+      <h3 class="font-semibold text-lg mb-2">AI Resume & Cover Letter</h3>
+      <p class="text-gray-600">Generate ATS-friendly resumes & tailored cover letters instantly.</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
+      <h3 class="font-semibold text-lg mb-2">AI Mentor Mode</h3>
+      <p class="text-gray-600">Your personal AI career coach guiding every step.</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
+      <h3 class="font-semibold text-lg mb-2">Job Roadmaps</h3>
+      <p class="text-gray-600">Step-by-step skill plans to reach your dream role.</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
+      <h3 class="font-semibold text-lg mb-2">Interview Practice</h3>
+      <p class="text-gray-600">Interactive AI mock interviews with instant scoring.</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
+      <h3 class="font-semibold text-lg mb-2">Job Tracker</h3>
+      <p class="text-gray-600">Track applied jobs with statuses: Applied → Interview → Offer → Hired.</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
+      <h3 class="font-semibold text-lg mb-2">Portfolio Showcase</h3>
+      <p class="text-gray-600">Upload projects & stand out to recruiters.</p>
     </div>
   </section>
 
-  <!-- Firebase SDKs -->
-  <script type="module">
-    // Import Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } 
-      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  <!-- User Info -->
+  <section class="text-center py-8">
+    <h2 id="welcomeMsg" class="text-xl font-semibold">Welcome, Guest</h2>
+  </section>
 
-    // Firebase config (your keys)
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } 
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
       authDomain: "job5x-472810.firebaseapp.com",
       projectId: "job5x-472810",
-      storageBucket: "job5x-472810.firebasestorage.app",
+      storageBucket: "job5x-472810.appspot.com",
       messagingSenderId: "927725128020",
       appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
       measurementId: "G-FKT33RHQ9M"
     };
 
-    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
-    const db = getFirestore(app);
 
-    // DOM elements
-    const loginBtn = document.getElementById("login-btn");
-    const logoutBtn = document.getElementById("logout-btn");
-    const userName = document.getElementById("user-name");
-    const userEmail = document.getElementById("user-email");
-    const userPic = document.getElementById("user-pic");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const welcomeMsg = document.getElementById("welcomeMsg");
 
     // Login
     loginBtn.addEventListener("click", async () => {
       try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-
-        // Save user in Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          name: user.displayName,
-          email: user.email,
-          photo: user.photoURL,
-          lastLogin: new Date().toISOString()
-        });
-
-        console.log("User logged in:", user.displayName);
+        await signInWithPopup(auth, provider);
       } catch (error) {
-        console.error("Login error", error);
+        console.error(error);
       }
     });
 
     // Logout
     logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error(error);
+      }
     });
 
-    // Auth state change listener
+    // Auth state listener
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        userName.textContent = user.displayName;
-        userEmail.textContent = user.email;
-        if (user.photoURL) {
-          userPic.src = user.photoURL;
-          userPic.classList.remove("hidden");
-        }
+        welcomeMsg.textContent = `Welcome, ${user.displayName}`;
         loginBtn.classList.add("hidden");
         logoutBtn.classList.remove("hidden");
       } else {
-        userName.textContent = "Guest";
-        userEmail.textContent = "";
-        userPic.classList.add("hidden");
+        welcomeMsg.textContent = "Welcome, Guest";
         loginBtn.classList.remove("hidden");
         logoutBtn.classList.add("hidden");
       }
