@@ -10,7 +10,6 @@
       margin: 0;
       padding: 0;
       background: #f8f9fa;
-      text-align: center;
     }
     header {
       background: white;
@@ -25,32 +24,38 @@
       font-weight: bold;
       color: #007bff;
     }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
     nav a {
-      margin: 0 10px;
       text-decoration: none;
       color: #333;
     }
-    .hero {
-      padding: 60px 20px;
-      background: linear-gradient(to right, #dbeafe, #eff6ff);
-    }
-    .hero h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
     .btn {
-      padding: 10px 20px;
+      padding: 8px 16px;
       background: #007bff;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
     }
     .btn:hover {
       background: #0056b3;
     }
     #logoutBtn { display: none; }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-info img {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 <body>
@@ -61,7 +66,11 @@
       <a href="#">Pricing</a>
       <a href="#">FAQ</a>
       <button id="loginBtn" class="btn">Sign in with Google</button>
-      <button id="logoutBtn" class="btn">Logout</button>
+      <div class="user-info" id="userInfo" style="display:none;">
+        <img id="userPic" src="" alt="Profile">
+        <span id="userName"></span>
+        <button id="logoutBtn" class="btn">Logout</button>
+      </div>
     </nav>
   </header>
 
@@ -70,7 +79,6 @@
     <p>Your all-in-one AI-powered career co-pilot: resumes, interviews, skill growth, job tracking, and more.</p>
     <button class="btn">Start Free Today</button>
     <p>⚡ Early Bird Offer: 70% Off First 100 Users</p>
-    <h2 id="welcomeMsg">Welcome, Guest</h2>
   </section>
 
   <!-- Firebase Auth -->
@@ -83,7 +91,7 @@
       apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
       authDomain: "job5x-472810.firebaseapp.com",
       projectId: "job5x-472810",
-      storageBucket: "job5x-472810.appspot.com",   // ✅ fixed here
+      storageBucket: "job5x-472810.appspot.com",
       messagingSenderId: "927725128020",
       appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
       measurementId: "G-FKT33RHQ9M"
@@ -95,7 +103,9 @@
 
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
-    const welcomeMsg = document.getElementById("welcomeMsg");
+    const userInfo = document.getElementById("userInfo");
+    const userPic = document.getElementById("userPic");
+    const userName = document.getElementById("userName");
 
     // Login
     loginBtn.addEventListener("click", async () => {
@@ -115,16 +125,16 @@
       }
     });
 
-    // Keep user logged in
+    // Track login state
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        welcomeMsg.textContent = `Welcome, ${user.displayName}`;
         loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
+        userInfo.style.display = "flex";
+        userPic.src = user.photoURL;
+        userName.textContent = user.displayName;
       } else {
-        welcomeMsg.textContent = "Welcome, Guest";
         loginBtn.style.display = "inline-block";
-        logoutBtn.style.display = "none";
+        userInfo.style.display = "none";
       }
     });
   </script>
