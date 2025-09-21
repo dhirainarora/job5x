@@ -9,7 +9,6 @@ export const handler = async (event) => {
       return { statusCode: 500, body: JSON.stringify({ error: "Missing Gemini API Key" }) };
     }
 
-    // Prompts for each feature
     const prompts = {
       resume: `Improve and optimize this resume: ${body.details || ""}`,
       mentor: `Give career guidance: ${body.text || ""}`,
@@ -24,7 +23,6 @@ export const handler = async (event) => {
 
     const prompt = prompts[action] || `Say something useful about ${action}`;
 
-    // Call Gemini
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`,
       {
@@ -43,7 +41,6 @@ export const handler = async (event) => {
 
     const data = await response.json();
 
-    // Safe parsing
     let aiReply = "";
     try {
       aiReply =
