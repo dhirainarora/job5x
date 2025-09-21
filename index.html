@@ -1,161 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CareerAI — Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareerAI</title>
   <style>
-    .card { background:#fff; border-radius:16px; box-shadow:0 10px 30px rgba(2,6,23,0.08); }
-    .modal { display:none; }
-    .modal.active { display:flex; }
+    body { font-family: Arial, sans-serif; background: #f9fafb; margin: 0; padding: 0; }
+    header { background: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .container { max-width: 900px; margin: 40px auto; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 16px; }
+    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .output { margin-top: 30px; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); white-space: pre-wrap; }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body>
+  <header>
+    <h1 style="color:#2563eb;font-weight:bold;">CareerAI</h1>
+    <button id="logoutBtn" style="background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">Logout</button>
+  </header>
 
-<header class="bg-white shadow sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <h1 class="text-2xl font-extrabold text-blue-700">CareerAI</h1>
-    <div class="flex gap-4">
-      <button id="login-btn" class="px-4 py-2 rounded bg-blue-600 text-white">Sign in</button>
-      <div id="profile" class="hidden flex items-center gap-3">
-        <img id="profile-pic" class="w-10 h-10 rounded-full" src="" alt="">
-        <div>
-          <div id="profile-name" class="font-bold"></div>
-          <div id="profile-email" class="text-xs text-gray-500"></div>
-        </div>
-        <button id="logout-btn" class="px-3 py-1 rounded border">Logout</button>
-      </div>
+  <div class="container">
+    <h2>Choose a feature</h2>
+    <div class="grid">
+      <div class="card" onclick="runAI('resume')">AI Resume & Cover Letter</div>
+      <div class="card" onclick="runAI('mentor')">AI Mentor Mode</div>
+      <div class="card" onclick="runAI('roadmap')">Job Roadmaps</div>
+      <div class="card" onclick="runAI('interview')">Interview Practice</div>
+      <div class="card" onclick="runAI('insights')">Career Insights</div>
+      <div class="card" onclick="runAI('quiz')">Skill Quizzes</div>
+      <div class="card" onclick="runAI('community')">Community Hub</div>
+      <div class="card" onclick="runAI('portfolio')">Portfolio Showcase</div>
+      <div class="card" onclick="runAI('coverLetter')">AI Cover Letter</div>
     </div>
+
+    <div id="output" class="output" style="display:none;"></div>
   </div>
-</header>
 
-<!-- ===== Dashboard with 9 Feature Cards ===== -->
-<main class="max-w-7xl mx-auto p-6 grid md:grid-cols-3 gap-6">
-  <div class="card p-6 text-center cursor-pointer" data-feature="resume">AI Resume & Cover Letter</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="mentor">AI Mentor Mode</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="roadmap">Job Roadmaps</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="interview">Interview Practice</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="tracker">Job Tracker</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="insights">Career Insights</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="quiz">Skill Quizzes</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="community">Community Hub</div>
-  <div class="card p-6 text-center cursor-pointer" data-feature="portfolio">Portfolio Showcase</div>
-</main>
-
-<!-- ===== Modal Template ===== -->
-<div id="feature-modal" class="modal fixed inset-0 items-center justify-center bg-black bg-opacity-40 z-50">
-  <div class="bg-white rounded-lg w-11/12 md:w-3/4 p-6 max-h-[90vh] overflow-auto">
-    <div class="flex justify-between items-center mb-4">
-      <h3 id="modal-title" class="text-xl font-bold"></h3>
-      <button id="close-modal" class="text-gray-500">✕</button>
-    </div>
-    <div id="modal-body" class="space-y-4"></div>
-  </div>
-</div>
-
-<script type="module">
-  /* ===== Firebase Auth Setup ===== */
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
-    authDomain: "job5x-472810.firebaseapp.com",
-    projectId: "job5x-472810",
-    storageBucket: "job5x-472810.appspot.com",
-    messagingSenderId: "927725128020",
-    appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
-    measurementId: "G-FKT33RHQ9M"
-  };
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-
-  const loginBtn = document.getElementById("login-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-  const profile = document.getElementById("profile");
-  const profilePic = document.getElementById("profile-pic");
-  const profileName = document.getElementById("profile-name");
-  const profileEmail = document.getElementById("profile-email");
-
-  loginBtn.onclick = () => signInWithPopup(auth, provider);
-  logoutBtn.onclick = () => signOut(auth);
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      profile.classList.remove("hidden");
-      loginBtn.classList.add("hidden");
-      profilePic.src = user.photoURL;
-      profileName.textContent = user.displayName;
-      profileEmail.textContent = user.email;
-    } else {
-      profile.classList.add("hidden");
-      loginBtn.classList.remove("hidden");
+  <script>
+    async function runAI(action) {
+      const res = await fetch("/.netlify/functions/resume", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: action,
+          details: "My resume details here",
+          job: "Software Engineer",
+          skill: "Python",
+          text: "I want to improve my career"
+        })
+      });
+      const data = await res.json();
+      const output = document.getElementById("output");
+      output.style.display = "block";
+      output.innerText = data.aiReply || data.error || "Something went wrong.";
     }
-  });
-
-  /* ===== Feature Cards → Modals ===== */
-  const modal = document.getElementById("feature-modal");
-  const modalTitle = document.getElementById("modal-title");
-  const modalBody = document.getElementById("modal-body");
-  document.getElementById("close-modal").onclick = () => modal.classList.remove("active");
-
-  const AI_ENDPOINT = "/.netlify/functions/resume";
-
-  async function callAI(action, payload) {
-    const res = await fetch(AI_ENDPOINT, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ action, ...payload })
-    });
-    return await res.json();
-  }
-
-  document.querySelectorAll("[data-feature]").forEach(card => {
-    card.onclick = async () => {
-      const feature = card.dataset.feature;
-      modal.classList.add("active");
-      modalTitle.textContent = card.textContent;
-      modalBody.innerHTML = `<p class='text-gray-500'>Loading...</p>`;
-
-      let result;
-      if (feature==="resume") {
-        result = await callAI("resume", { details:"User resume input here" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="mentor") {
-        result = await callAI("mentor", { text:"How to improve my career?" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="roadmap") {
-        result = await callAI("roadmap", { job:"Data Scientist" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="interview") {
-        result = await callAI("interview", { job:"Software Engineer" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="tracker") {
-        modalBody.innerHTML = `<p>Add and track jobs manually here (to be extended).</p>`;
-      }
-      if (feature==="insights") {
-        result = await callAI("insights", { job:"Software Engineer" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="quiz") {
-        result = await callAI("quiz", { skill:"Python" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="community") {
-        result = await callAI("community", { topic:"Job tips" });
-        modalBody.innerHTML = `<pre>${result.aiReply}</pre>`;
-      }
-      if (feature==="portfolio") {
-        modalBody.innerHTML = `<p>Upload portfolio projects here (to be extended).</p>`;
-      }
-    };
-  });
-</script>
+  </script>
 </body>
 </html>
