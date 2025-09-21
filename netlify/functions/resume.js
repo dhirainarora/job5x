@@ -1,37 +1,63 @@
-import fetch from "node-fetch";
-
-export async function handler(event, context) {
+// netlify/functions/resume.js
+export const handler = async (event) => {
   try {
-    const { action, details, job, text, skill, topic } = JSON.parse(event.body);
-    const promptMap = {
-      resume: `Improve this resume for the job ${job}. Resume details:\n${details}\nReturn JSON with improved_summary, missing_skills, score, suggestions.`,
-      mentor: `Act as a career mentor. Answer clearly: ${text}`,
-      roadmap: `Create a 5-step roadmap to become a ${job}. Return JSON array of steps.`,
-      interview: `Give top 10 interview questions for ${job} with difficulty.`,
-      insights: `Show salary trends, demand, and top companies hiring for ${job}.`,
-      quiz: `Make a short quiz (5 MCQs) for ${skill}. Return JSON with question, options, answer.`,
-      community: `Write 3 discussion posts in a job seekers community about ${topic}.`,
-      portfolio: `Suggest 3 portfolio project ideas for ${job || 'tech career'}.`,
-      coverLetter: `Write a professional cover letter for the role ${job}.`
-    };
+    const body = event.body ? JSON.parse(event.body) : {};
+    const { action } = body;
 
-    const prompt = promptMap[action] || "Say hello";
     const GEMINI_KEY = process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`;
+    if (!GEMINI_KEY) {
+      return { statusCode: 500, body: JSON.stringify({ error: "Missing Gemini API Key" }) };
+    }
 
-    const aiRes = await fetch(url, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] })
-    });
-    const data = await aiRes.json();
-
-    let aiReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "No reply";
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ aiReply })
+    // Prompts for each feature
+    const prompts = {
+      resume: `Improve and optimize this resume: ${body.details || ""}`,
+      mentor: `Give career guidance: ${body.text || ""}`,
+      roadmap: `Roadmap for becoming ${body.job || "a software engineer"}`,
+      interview: `Top interview questions for ${body.job || "developer"}`,
+      insights: `Industry insights for ${body.job || "developer"}`,
+      quiz: `Give me a short quiz on ${body.skill || "Python"}`,
+      community: `Discussion ideas about ${body.topic || "career growth"}`,
+      portfolio: `Suggest 3 portfolio projects for ${body.job || "developer"}`,
+      coverLetter: `Write a cover letter for ${body.job || "developer"}`
     };
+
+    const prompt = prompts[action] || `Say something useful about ${action}`;
+
+    // Call Gemini
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errText = await response.text();
+      return { statusCode: response.status, body: JSON.stringify({ error: errText }) };
+    }
+
+    const data = await response.json();
+
+    // Safe parsing
+    let aiReply = "";
+    try {
+      aiReply =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        data?.candidates?.[0]?.content?.[0]?.text ||
+        data?.candidates?.[0]?.output ||
+        data?.output ||
+        JSON.stringify(data);
+    } catch (e) {
+      aiReply = "Parsing error: " + JSON.stringify(data);
+    }
+
+    return { statusCode: 200, body: JSON.stringify({ aiReply }) };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
-}
+};
