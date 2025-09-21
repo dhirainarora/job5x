@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareerAI</title>
-  <!-- TailwindCSS via CDN -->
+  <!-- TailwindCSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900">
 
   <!-- Header -->
   <header class="flex items-center justify-between p-6 bg-white shadow-md sticky top-0 z-50">
-    <h1 class="text-2xl font-extrabold text-blue-700">CareerAI</h1>
+    <h1 class="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+      Career<span class="text-blue-800">AI</span>
+    </h1>
     <nav class="space-x-6 font-medium">
       <a href="#features" class="hover:text-blue-600 transition">Features</a>
       <a href="#pricing" class="hover:text-blue-600 transition">Pricing</a>
@@ -20,7 +22,7 @@
     </nav>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="text-center py-28 bg-gradient-to-r from-blue-100 to-blue-200">
     <h2 class="text-6xl font-extrabold mb-6 text-gray-900">🚀 Land Your Dream Job with AI</h2>
     <p class="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
@@ -32,35 +34,95 @@
     <p class="mt-4 text-sm text-gray-600 font-medium">⚡ Early Bird Offer: 70% Off First 100 Users</p>
   </section>
 
-  <!-- Features Section -->
+  <!-- Features -->
   <section id="features" class="grid md:grid-cols-3 gap-8 p-12 max-w-7xl mx-auto">
-    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+
+    <!-- Resume -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v14a2 2 0 01-2 2z"/>
+      </svg>
       <h3 class="font-bold text-lg mb-2">AI Resume & Cover Letter</h3>
       <p class="text-sm text-gray-600">Generate ATS-friendly resumes & tailored cover letters instantly.</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+
+    <!-- Mentor -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M9 10s.75-1 3-1 3 1 3 1"/>
+        <path d="M9 15h6"/>
+      </svg>
       <h3 class="font-bold text-lg mb-2">AI Mentor Mode</h3>
       <p class="text-sm text-gray-600">Your personal AI career coach guiding every step.</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+
+    <!-- Roadmaps -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M9 17l3-3 3 3 4-4"/>
+      </svg>
       <h3 class="font-bold text-lg mb-2">Job Roadmaps</h3>
       <p class="text-sm text-gray-600">Step-by-step skill plans to reach your dream role.</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+
+    <!-- Interview -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1v22m11-11H1"/>
+      </svg>
       <h3 class="font-bold text-lg mb-2">Interview Practice</h3>
       <p class="text-sm text-gray-600">Interactive AI mock interviews with instant scoring.</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+
+    <!-- Job Tracker -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6h12M6 12h12M6 18h12"/>
+      </svg>
       <h3 class="font-bold text-lg mb-2">Job Tracker</h3>
       <p class="text-sm text-gray-600">Track applied jobs with statuses: Applied → Interview → Offer → Hired.</p>
     </div>
-    <div class="bg-white p-8 rounded-2xl shadow-lg text-center">
+
+    <!-- Insights -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 8-8"/>
+      </svg>
+      <h3 class="font-bold text-lg mb-2">Career Insights</h3>
+      <p class="text-sm text-gray-600">Salary trends, demand graphs, and top companies hiring.</p>
+    </div>
+
+    <!-- Quizzes -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16M4 12h16M4 19h16"/>
+      </svg>
+      <h3 class="font-bold text-lg mb-2">Skill Quizzes</h3>
+      <p class="text-sm text-gray-600">Test your skills with AI quizzes and unlock badges.</p>
+    </div>
+
+    <!-- Community -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4H2v16h5m10 0v-4a4 4 0 00-8 0v4"/>
+      </svg>
+      <h3 class="font-bold text-lg mb-2">Community Hub</h3>
+      <p class="text-sm text-gray-600">Connect with peers, share experiences, and grow together.</p>
+    </div>
+
+    <!-- Portfolio -->
+    <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M3 7h18M3 12h18M3 17h18"/>
+      </svg>
       <h3 class="font-bold text-lg mb-2">Portfolio Showcase</h3>
       <p class="text-sm text-gray-600">Upload projects & stand out to recruiters.</p>
     </div>
+
   </section>
 
-  <!-- Dashboard Preview -->
+  <!-- Dashboard -->
   <section class="bg-white py-12">
     <div class="max-w-7xl mx-auto px-6">
       <h2 class="text-3xl font-extrabold mb-6">Preview: Logged-in Dashboard</h2>
@@ -141,5 +203,6 @@
   <footer class="bg-gray-900 text-white py-12 text-center mt-12">
     <p>© 2025 CareerAI. All rights reserved.</p>
   </footer>
+
 </body>
 </html>
