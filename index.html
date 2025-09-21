@@ -4,88 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareerAI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+      text-align: center;
+    }
+    header {
+      background: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #007bff;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+    }
+    .hero {
+      padding: 60px 20px;
+      background: linear-gradient(to right, #dbeafe, #eff6ff);
+    }
+    .hero h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    #logoutBtn { display: none; }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
-  <!-- Navbar -->
-  <nav class="flex justify-between items-center p-6 bg-white shadow">
-    <h1 class="text-2xl font-bold text-blue-600">CareerAI</h1>
-    <div class="flex gap-6 items-center">
-      <a href="#features" class="hover:text-blue-600">Features</a>
-      <a href="#pricing" class="hover:text-blue-600">Pricing</a>
-      <a href="#faq" class="hover:text-blue-600">FAQ</a>
-      <button id="loginBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Sign in with Google</button>
-      <button id="logoutBtn" class="hidden bg-gray-300 text-black px-4 py-2 rounded-lg hover:bg-gray-400">Logout</button>
-    </div>
-  </nav>
+<body>
+  <header>
+    <div class="logo">CareerAI</div>
+    <nav>
+      <a href="#">Features</a>
+      <a href="#">Pricing</a>
+      <a href="#">FAQ</a>
+      <button id="loginBtn" class="btn">Sign in with Google</button>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </nav>
+  </header>
 
-  <!-- Hero -->
-  <section class="text-center py-20 bg-gradient-to-b from-blue-50 to-white">
-    <h1 class="text-4xl font-bold">🚀 Land Your Dream Job with AI</h1>
-    <p class="mt-4 text-lg text-gray-600">Your all-in-one AI-powered career co-pilot: resumes, interviews, skill growth, job tracking, and more.</p>
-    <button class="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">Start Free Today</button>
-    <p class="mt-2 text-sm text-gray-500">⚡ Early Bird Offer: 70% Off First 100 Users</p>
+  <section class="hero">
+    <h1>🚀 Land Your Dream Job with AI</h1>
+    <p>Your all-in-one AI-powered career co-pilot: resumes, interviews, skill growth, job tracking, and more.</p>
+    <button class="btn">Start Free Today</button>
+    <p>⚡ Early Bird Offer: 70% Off First 100 Users</p>
+    <h2 id="welcomeMsg">Welcome, Guest</h2>
   </section>
 
-  <!-- Features -->
-  <section id="features" class="py-16 px-6 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-    <div class="p-6 bg-white shadow rounded-2xl">
-      <h3 class="font-bold text-lg">AI Resume & Cover Letter</h3>
-      <p class="mt-2 text-gray-600">Generate ATS-friendly resumes & tailored cover letters instantly.</p>
-    </div>
-    <div class="p-6 bg-white shadow rounded-2xl">
-      <h3 class="font-bold text-lg">AI Mentor Mode</h3>
-      <p class="mt-2 text-gray-600">Your personal AI career coach guiding every step.</p>
-    </div>
-    <div class="p-6 bg-white shadow rounded-2xl">
-      <h3 class="font-bold text-lg">Job Roadmaps</h3>
-      <p class="mt-2 text-gray-600">Step-by-step skill plans to reach your dream role.</p>
-    </div>
-    <div class="p-6 bg-white shadow rounded-2xl">
-      <h3 class="font-bold text-lg">Interview Practice</h3>
-      <p class="mt-2 text-gray-600">Interactive AI mock interviews with instant scoring.</p>
-    </div>
-    <div class="p-6 bg-white shadow rounded-2xl">
-      <h3 class="font-bold text-lg">Job Tracker</h3>
-      <p class="mt-2 text-gray-600">Track applied jobs with statuses: Applied → Interview → Offer → Hired.</p>
-    </div>
-    <div class="p-6 bg-white shadow rounded-2xl">
-      <h3 class="font-bold text-lg">Portfolio Showcase</h3>
-      <p class="mt-2 text-gray-600">Upload projects & stand out to recruiters.</p>
-    </div>
-  </section>
-
-  <!-- User Greeting -->
-  <section class="text-center py-10">
-    <h2 id="welcomeText" class="text-2xl font-semibold">Welcome, Guest</h2>
-  </section>
-
-  <!-- Firebase -->
+  <!-- Firebase Auth -->
   <script type="module">
-    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
       authDomain: "job5x-472810.firebaseapp.com",
       projectId: "job5x-472810",
-      storageBucket: "job5x-472810.firebasestorage.app",
+      storageBucket: "job5x-472810.appspot.com",   // ✅ fixed here
       messagingSenderId: "927725128020",
       appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
       measurementId: "G-FKT33RHQ9M"
     };
 
-    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // DOM elements
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
-    const welcomeText = document.getElementById("welcomeText");
+    const welcomeMsg = document.getElementById("welcomeMsg");
 
     // Login
     loginBtn.addEventListener("click", async () => {
@@ -105,16 +115,16 @@
       }
     });
 
-    // Auth state listener
+    // Keep user logged in
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        welcomeText.textContent = `Welcome, ${user.displayName}`;
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
+        welcomeMsg.textContent = `Welcome, ${user.displayName}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
       } else {
-        welcomeText.textContent = "Welcome, Guest";
-        loginBtn.classList.remove("hidden");
-        logoutBtn.classList.add("hidden");
+        welcomeMsg.textContent = "Welcome, Guest";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
       }
     });
   </script>
