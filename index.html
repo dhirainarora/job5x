@@ -5,86 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CareerAI</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f8f9fa;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f8f9fa; }
     header {
-      background: white;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: white; padding: 15px 30px; display: flex;
+      justify-content: space-between; align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-      color: #007bff;
-    }
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      position: relative;
-    }
-    nav a {
-      text-decoration: none;
-      color: #333;
-      font-size: 16px;
-    }
+    .logo { font-size: 24px; font-weight: bold; color: #007bff; }
+    nav { display: flex; align-items: center; gap: 20px; position: relative; }
+    nav a { text-decoration: none; color: #333; font-size: 16px; }
     .btn {
-      padding: 8px 16px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
+      padding: 8px 16px; background: #007bff; color: white;
+      border: none; border-radius: 5px; cursor: pointer;
     }
-    .btn:hover {
-      background: #0056b3;
-    }
-    .user-menu {
-      position: relative;
-      display: inline-block;
-    }
+    .btn:hover { background: #0056b3; }
+    .user-menu { position: relative; display: inline-block; }
     .user-menu img {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      cursor: pointer;
+      width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
     }
     .dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      margin-top: 10px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 200px;
-      z-index: 10;
+      display: none; position: absolute; right: 0; margin-top: 10px;
+      background: white; border: 1px solid #ddd; border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 220px; z-index: 10;
     }
-    .dropdown p {
-      margin: 10px;
-      font-size: 14px;
-      color: #333;
-    }
+    .dropdown p { margin: 10px; font-size: 14px; color: #333; }
     .dropdown button {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      text-align: left;
-      font-size: 14px;
+      width: 100%; padding: 10px; border: none; background: none;
+      cursor: pointer; text-align: left; font-size: 14px;
     }
-    .dropdown button:hover {
-      background: #f0f0f0;
+    .dropdown button:hover { background: #f0f0f0; }
+    /* Auth modal */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: white; padding: 20px; border-radius: 8px;
+      width: 300px; text-align: center;
+    }
+    .modal-content input {
+      width: 90%; padding: 10px; margin: 10px 0;
+      border: 1px solid #ddd; border-radius: 5px;
     }
   </style>
 </head>
@@ -95,7 +56,8 @@
       <a href="#">Features</a>
       <a href="#">Pricing</a>
       <a href="#">FAQ</a>
-      <button id="loginBtn" class="btn">Sign in</button>
+      <button id="loginBtn" class="btn">Login</button>
+      <button id="signupBtn" class="btn">Sign Up</button>
       <div class="user-menu" id="userMenu" style="display:none;">
         <img id="userPic" src="" alt="Profile">
         <div class="dropdown" id="dropdownMenu">
@@ -115,11 +77,28 @@
     <p>⚡ Early Bird Offer: 70% Off First 100 Users</p>
   </section>
 
-  <!-- Firebase Auth -->
+  <!-- Auth Modal -->
+  <div class="modal" id="authModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Login</h2>
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Password">
+      <button id="authActionBtn" class="btn">Login</button>
+      <p>or</p>
+      <button id="googleLoginBtn" class="btn">Continue with Google</button>
+      <br><br>
+      <button id="closeModal" class="btn" style="background:#6c757d;">Close</button>
+    </div>
+  </div>
+
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
+             GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
       from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, setDoc, doc } 
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
@@ -133,9 +112,19 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
+    // UI elements
     const loginBtn = document.getElementById("loginBtn");
+    const signupBtn = document.getElementById("signupBtn");
+    const authModal = document.getElementById("authModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const authActionBtn = document.getElementById("authActionBtn");
+    const googleLoginBtn = document.getElementById("googleLoginBtn");
+    const closeModal = document.getElementById("closeModal");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
     const userMenu = document.getElementById("userMenu");
     const userPic = document.getElementById("userPic");
     const userName = document.getElementById("userName");
@@ -143,39 +132,68 @@
     const dropdownMenu = document.getElementById("dropdownMenu");
     const logoutBtn = document.getElementById("logoutBtn");
 
-    // Login
-    loginBtn.addEventListener("click", async () => {
+    let isSignup = false;
+
+    // Show modal
+    loginBtn.onclick = () => { isSignup = false; modalTitle.textContent = "Login"; authActionBtn.textContent = "Login"; authModal.style.display = "flex"; };
+    signupBtn.onclick = () => { isSignup = true; modalTitle.textContent = "Sign Up"; authActionBtn.textContent = "Sign Up"; authModal.style.display = "flex"; };
+    closeModal.onclick = () => authModal.style.display = "none";
+
+    // Auth action
+    authActionBtn.onclick = async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
       try {
-        await signInWithPopup(auth, provider);
-      } catch (error) {
-        console.error("Login error:", error);
+        if (isSignup) {
+          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+          await setDoc(doc(db, "users", userCred.user.uid), {
+            email: userCred.user.email,
+            createdAt: new Date()
+          });
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+        authModal.style.display = "none";
+      } catch (err) {
+        alert(err.message);
       }
-    });
+    };
+
+    // Google login
+    googleLoginBtn.onclick = async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        await setDoc(doc(db, "users", result.user.uid), {
+          name: result.user.displayName,
+          email: result.user.email,
+          photo: result.user.photoURL
+        }, { merge: true });
+        authModal.style.display = "none";
+      } catch (err) {
+        alert(err.message);
+      }
+    };
 
     // Logout
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-      } catch (error) {
-        console.error("Logout error:", error);
-      }
-    });
+    logoutBtn.onclick = async () => await signOut(auth);
 
-    // Toggle dropdown
-    userPic.addEventListener("click", () => {
+    // Dropdown toggle
+    userPic.onclick = () => {
       dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-    });
+    };
 
     // Track auth state
     onAuthStateChanged(auth, (user) => {
       if (user) {
         loginBtn.style.display = "none";
+        signupBtn.style.display = "none";
         userMenu.style.display = "inline-block";
-        userPic.src = user.photoURL;
-        userName.textContent = user.displayName;
+        userPic.src = user.photoURL || "https://via.placeholder.com/38";
+        userName.textContent = user.displayName || "User";
         userEmail.textContent = user.email;
       } else {
         loginBtn.style.display = "inline-block";
+        signupBtn.style.display = "inline-block";
         userMenu.style.display = "none";
       }
     });
