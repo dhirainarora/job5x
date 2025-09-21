@@ -27,11 +27,13 @@
     nav {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 20px;
+      position: relative;
     }
     nav a {
       text-decoration: none;
       color: #333;
+      font-size: 16px;
     }
     .btn {
       padding: 8px 16px;
@@ -45,16 +47,44 @@
     .btn:hover {
       background: #0056b3;
     }
-    #logoutBtn { display: none; }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .user-menu {
+      position: relative;
+      display: inline-block;
     }
-    .user-info img {
-      width: 35px;
-      height: 35px;
+    .user-menu img {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
+      cursor: pointer;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      margin-top: 10px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 200px;
+      z-index: 10;
+    }
+    .dropdown p {
+      margin: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+    .dropdown button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+    }
+    .dropdown button:hover {
+      background: #f0f0f0;
     }
   </style>
 </head>
@@ -65,11 +95,15 @@
       <a href="#">Features</a>
       <a href="#">Pricing</a>
       <a href="#">FAQ</a>
-      <button id="loginBtn" class="btn">Sign in with Google</button>
-      <div class="user-info" id="userInfo" style="display:none;">
+      <button id="loginBtn" class="btn">Sign in</button>
+      <div class="user-menu" id="userMenu" style="display:none;">
         <img id="userPic" src="" alt="Profile">
-        <span id="userName"></span>
-        <button id="logoutBtn" class="btn">Logout</button>
+        <div class="dropdown" id="dropdownMenu">
+          <p id="userName"></p>
+          <p id="userEmail"></p>
+          <button id="accountBtn">My Account</button>
+          <button id="logoutBtn">Logout</button>
+        </div>
       </div>
     </nav>
   </header>
@@ -102,10 +136,12 @@
     const provider = new GoogleAuthProvider();
 
     const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userInfo = document.getElementById("userInfo");
+    const userMenu = document.getElementById("userMenu");
     const userPic = document.getElementById("userPic");
     const userName = document.getElementById("userName");
+    const userEmail = document.getElementById("userEmail");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    const logoutBtn = document.getElementById("logoutBtn");
 
     // Login
     loginBtn.addEventListener("click", async () => {
@@ -125,16 +161,22 @@
       }
     });
 
-    // Track login state
+    // Toggle dropdown
+    userPic.addEventListener("click", () => {
+      dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+    });
+
+    // Track auth state
     onAuthStateChanged(auth, (user) => {
       if (user) {
         loginBtn.style.display = "none";
-        userInfo.style.display = "flex";
+        userMenu.style.display = "inline-block";
         userPic.src = user.photoURL;
         userName.textContent = user.displayName;
+        userEmail.textContent = user.email;
       } else {
         loginBtn.style.display = "inline-block";
-        userInfo.style.display = "none";
+        userMenu.style.display = "none";
       }
     });
   </script>
