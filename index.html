@@ -1,60 +1,649 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CareerAI</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CareerAI — Dashboard</title>
+
+  <!-- Tailwind CDN for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    body { font-family: Arial, sans-serif; background: #f9fafb; margin: 0; padding: 0; }
-    header { background: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .container { max-width: 900px; margin: 40px auto; padding: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 16px; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
-    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .output { margin-top: 30px; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); white-space: pre-wrap; }
+    /* Small custom styles to make resume preview look 'sexy' */
+    .resume-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 12px 40px rgba(2,6,23,0.08); }
+    .avatar-sm { width:40px;height:40px;border-radius:9999px;object-fit:cover; }
+    .muted { color: #6b7280; }
+    .modal-backdrop { background: rgba(2,6,23,0.45); }
+    pre.ai-output { white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
   </style>
 </head>
-<body>
-  <header>
-    <h1 style="color:#2563eb;font-weight:bold;">CareerAI</h1>
-    <button id="logoutBtn" style="background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">Logout</button>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- HEADER -->
+  <header class="flex items-center justify-between p-6 bg-white shadow-md sticky top-0 z-50">
+    <h1 class="text-2xl font-extrabold text-blue-700">CareerAI</h1>
+    <nav class="flex items-center gap-6">
+      <a href="#features" class="text-sm hover:text-blue-600">Features</a>
+      <a href="#pricing" class="text-sm hover:text-blue-600">Pricing</a>
+      <a href="#faq" class="text-sm hover:text-blue-600">FAQ</a>
+
+      <!-- Auth area -->
+      <div id="auth-area" class="flex items-center gap-3">
+        <button id="signin-btn" class="bg-blue-600 text-white px-4 py-2 rounded">Sign in</button>
+        <div id="profile-block" class="hidden items-center gap-3">
+          <img id="profile-pic" class="avatar-sm" src="https://via.placeholder.com/40" alt="profile">
+          <div class="text-sm">
+            <div id="profile-name" class="font-semibold"></div>
+            <div id="profile-email" class="text-xs muted"></div>
+          </div>
+          <button id="signout-btn" class="px-3 py-2 rounded border">Logout</button>
+        </div>
+      </div>
+    </nav>
   </header>
 
-  <div class="container">
-    <h2>Choose a feature</h2>
-    <div class="grid">
-      <div class="card" onclick="runAI('resume')">AI Resume & Cover Letter</div>
-      <div class="card" onclick="runAI('mentor')">AI Mentor Mode</div>
-      <div class="card" onclick="runAI('roadmap')">Job Roadmaps</div>
-      <div class="card" onclick="runAI('interview')">Interview Practice</div>
-      <div class="card" onclick="runAI('insights')">Career Insights</div>
-      <div class="card" onclick="runAI('quiz')">Skill Quizzes</div>
-      <div class="card" onclick="runAI('community')">Community Hub</div>
-      <div class="card" onclick="runAI('portfolio')">Portfolio Showcase</div>
-      <div class="card" onclick="runAI('coverLetter')">AI Cover Letter</div>
+  <!-- HERO -->
+  <section class="text-center py-20 bg-gradient-to-r from-blue-100 to-blue-200">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-5xl font-extrabold mb-4">🚀 Land Your Dream Job with AI</h2>
+      <p class="text-lg text-gray-700 mb-8">Your all-in-one AI career co-pilot: resume, interviews, skill growth, job tracking, and more.</p>
+      <div class="flex items-center justify-center gap-4">
+        <button id="start-free" class="px-8 py-4 bg-blue-600 text-white rounded-lg shadow">Start Free Today</button>
+        <a href="#features" class="text-sm text-gray-700 underline">Explore features</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES GRID -->
+  <section id="features" class="grid md:grid-cols-3 gap-8 p-12 max-w-7xl mx-auto">
+    <!-- We'll render nine feature cards here — same labels/icons as your design -->
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="resume">
+      <div class="text-blue-600 mb-4">📄</div>
+      <h3 class="font-bold text-lg">AI Resume & Cover Letter</h3>
+      <p class="text-sm muted mt-2">Generate ATS-friendly resumes & tailored cover letters instantly.</p>
     </div>
 
-    <div id="output" class="output" style="display:none;"></div>
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="mentor">
+      <div class="text-blue-600 mb-4">🧠</div>
+      <h3 class="font-bold text-lg">AI Mentor Mode</h3>
+      <p class="text-sm muted mt-2">Your personal AI career coach guiding every step.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="roadmap">
+      <div class="text-blue-600 mb-4">🗺️</div>
+      <h3 class="font-bold text-lg">Job Roadmaps</h3>
+      <p class="text-sm muted mt-2">Step-by-step skill plans to reach your dream role.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="interview">
+      <div class="text-blue-600 mb-4">🎙️</div>
+      <h3 class="font-bold text-lg">Interview Practice</h3>
+      <p class="text-sm muted mt-2">Interactive AI mock interviews with instant scoring.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="tracker">
+      <div class="text-blue-600 mb-4">💼</div>
+      <h3 class="font-bold text-lg">Job Tracker</h3>
+      <p class="text-sm muted mt-2">Track applied jobs with statuses.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="insights">
+      <div class="text-blue-600 mb-4">📈</div>
+      <h3 class="font-bold text-lg">Career Insights</h3>
+      <p class="text-sm muted mt-2">Salary trends, demand graphs, and top companies hiring.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="quiz">
+      <div class="text-blue-600 mb-4">📚</div>
+      <h3 class="font-bold text-lg">Skill Quizzes</h3>
+      <p class="text-sm muted mt-2">Test your skills with AI quizzes and unlock badges.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="community">
+      <div class="text-blue-600 mb-4">👥</div>
+      <h3 class="font-bold text-lg">Community Hub</h3>
+      <p class="text-sm muted mt-2">Connect with peers, share experiences, and grow together.</p>
+    </div>
+
+    <div class="feature-card card-shadow p-8 bg-white rounded-2xl text-center cursor-pointer" data-action="portfolio">
+      <div class="text-blue-600 mb-4">✅</div>
+      <h3 class="font-bold text-lg">Portfolio Showcase</h3>
+      <p class="text-sm muted mt-2">Upload projects & stand out to recruiters.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PREVIEW (logged-in view) -->
+  <section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-3xl font-extrabold mb-6">Preview: Logged-in Dashboard</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Sidebar -->
+        <aside class="col-span-1 bg-white p-6 rounded-2xl shadow-lg">
+          <div class="flex items-center gap-4 mb-6">
+            <div id="sidebar-avatar" class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+              <!-- user initial or img -->
+            </div>
+            <div>
+              <h4 id="sidebar-name" class="font-bold">Guest</h4>
+              <p id="sidebar-role" class="text-sm muted">Visitor</p>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <p class="text-sm muted mb-1">Resume Optimization</p>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div id="resume-progress" class="bg-blue-600 h-3 rounded-full" style="width:0%"></div>
+            </div>
+            <p class="mt-2 text-sm">Score: <span id="resume-score" class="font-semibold">—</span></p>
+          </div>
+
+          <div class="mb-4">
+            <p class="text-sm muted mb-1">Roadmap Progress</p>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div id="roadmap-progress" class="bg-green-500 h-3 rounded-full" style="width:0%"></div>
+            </div>
+            <p class="mt-2 text-sm">Step <span id="roadmap-step">—</span> of <span id="roadmap-total">—</span></p>
+          </div>
+
+          <button id="upgrade-btn" class="w-full bg-blue-600 text-white py-2 rounded-lg">Upgrade for Full Feedback</button>
+
+          <div class="mt-6 text-sm muted">
+            <p class="mb-2"><strong>Next action:</strong> <span id="next-action">Log in to analyze resume</span></p>
+            <p class="mb-1">Deadline: <span id="deadline">—</span></p>
+          </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="col-span-1 md:col-span-3 space-y-6">
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="p-6 shadow-md rounded-2xl bg-white">
+              <p class="text-sm muted">Resume Score</p>
+              <h3 id="card-score" class="text-2xl font-bold">—</h3>
+              <p id="card-score-text" class="text-sm muted">Sign in & analyze</p>
+            </div>
+
+            <div class="p-6 shadow-md rounded-2xl bg-white">
+              <p class="text-sm muted">Active Applications</p>
+              <h3 id="card-apps" class="text-2xl font-bold">0</h3>
+              <p class="text-sm muted">No applications yet</p>
+            </div>
+
+            <div class="p-6 shadow-md rounded-2xl bg-white">
+              <p class="text-sm muted">Roadmap Progress</p>
+              <h3 id="card-roadmap-pct" class="text-2xl font-bold">0%</h3>
+              <p class="text-sm muted">Complete your learning path</p>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="p-6 shadow-md rounded-2xl bg-white">
+              <h4 class="font-bold mb-2">AI Mentor Snapshot</h4>
+              <p id="mentor-snapshot" class="text-sm muted mb-4">Sign in and analyze resume to get personalized mentor advice.</p>
+              <div class="flex gap-3">
+                <button id="chat-mentor" class="bg-blue-600 text-white px-4 py-2 rounded">Chat with Mentor</button>
+                <button id="view-resources" class="bg-gray-100 px-4 py-2 rounded">View Suggested Resources</button>
+              </div>
+            </div>
+
+            <div class="p-6 shadow-md rounded-2xl bg-white">
+              <h4 class="font-bold mb-2">Interview Practice</h4>
+              <p id="interview-text" class="text-sm muted mb-4">No mock scheduled.</p>
+              <div class="flex items-center gap-4">
+                <button id="start-mock" class="bg-blue-600 text-white px-4 py-2 rounded">Start Mock</button>
+                <button id="schedule-mock" class="bg-gray-100 px-4 py-2 rounded">Schedule</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h4 class="font-bold mb-4">Job Tracker</h4>
+            <div id="job-tracker-list" class="space-y-3">
+              <div class="flex items-center justify-between p-3 rounded-lg border">
+                <div>
+                  <p class="font-medium">No tracked jobs yet</p>
+                  <p class="text-sm muted">Add jobs from job boards</p>
+                </div>
+                <div class="text-sm font-semibold muted">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl shadow-md">
+            <h4 class="font-bold mb-4">Portfolio Showcase</h4>
+            <div id="portfolio-grid" class="grid md:grid-cols-3 gap-4">
+              <div class="p-3 border rounded-lg">No projects yet</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME MODAL (sexy preview + actions) -->
+  <div id="modal-backdrop" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-50">
+    <div class="bg-white rounded-lg w-11/12 md:w-4/5 max-w-5xl p-6 overflow-auto" style="max-height:90vh;">
+      <div class="flex items-start justify-between">
+        <h3 id="modal-title" class="text-xl font-bold">AI Resume & Cover Letter</h3>
+        <button id="close-modal" class="text-gray-500">✕</button>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mt-4">
+        <!-- form -->
+        <div class="md:col-span-1">
+          <label class="block text-sm muted">Target Job Role</label>
+          <input id="modal-job" class="w-full border rounded p-2 mb-3" placeholder="e.g. Data Scientist" />
+
+          <label class="block text-sm muted">Your Summary / Profile</label>
+          <textarea id="modal-summary" class="w-full border rounded p-2 mb-3" rows="3" placeholder="Short summary"></textarea>
+
+          <label class="block text-sm muted">Skills (comma separated)</label>
+          <input id="modal-skills" class="w-full border rounded p-2 mb-3" placeholder="Python, SQL, Pandas" />
+
+          <label class="block text-sm muted">Experience (each line: Title @ Company | Years | Short desc)</label>
+          <textarea id="modal-experience" class="w-full border rounded p-2 mb-3" rows="4"></textarea>
+
+          <label class="block text-sm muted">Education</label>
+          <input id="modal-education" class="w-full border rounded p-2 mb-3" placeholder="B.Sc — University | Year" />
+
+          <div class="flex gap-2">
+            <button id="analyze-btn" class="bg-blue-600 text-white px-4 py-2 rounded">Analyze & Improve</button>
+            <button id="export-btn" class="bg-green-600 text-white px-4 py-2 rounded">Export PDF</button>
+          </div>
+
+          <p id="modal-status" class="mt-3 text-sm muted"></p>
+        </div>
+
+        <!-- preview -->
+        <div class="md:col-span-2">
+          <div id="resume-preview" class="resume-card">
+            <div class="grid grid-cols-12 gap-4">
+              <div class="col-span-4 bg-blue-900 text-white p-4 rounded">
+                <div id="preview-photo" class="mb-3"></div>
+                <h2 id="preview-name" class="text-2xl font-bold">Your Name</h2>
+                <p id="preview-title" class="text-sm muted text-gray-200">Title</p>
+
+                <h4 class="mt-4 font-bold">Skills</h4>
+                <ul id="preview-skills" class="text-sm space-y-1"></ul>
+              </div>
+
+              <div class="col-span-8 p-4">
+                <div id="preview-summary" class="text-gray-800"></div>
+                <div id="preview-experience" class="mt-4"></div>
+                <h4 class="mt-4 font-bold">Education</h4>
+                <div id="preview-education" class="text-gray-700"></div>
+
+                <div id="preview-ai-suggestions" class="mt-4 text-sm text-red-600"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 bg-white p-4 rounded shadow">
+            <h4 class="font-bold">AI Analysis</h4>
+            <pre id="ai-analysis" class="ai-output text-sm muted"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script>
-    async function runAI(action) {
-      const res = await fetch("/.netlify/functions/resume", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: action,
-          details: "My resume details here",
-          job: "Software Engineer",
-          skill: "Python",
-          text: "I want to improve my career"
-        })
+  <!-- MENTOR MODAL (smaller) -->
+  <div id="mentor-backdrop" class="fixed inset-0 hidden items-center justify-center modal-backdrop z-50">
+    <div class="bg-white rounded-lg w-11/12 md:w-2/5 p-6">
+      <div class="flex items-center justify-between">
+        <h3 id="mentor-title" class="text-xl font-bold">AI Mentor</h3>
+        <button id="close-mentor" class="text-gray-500">✕</button>
+      </div>
+
+      <textarea id="mentor-input" class="w-full border rounded p-2 mt-4" rows="4" placeholder="Ask the mentor a question..."></textarea>
+      <div class="flex gap-2 mt-3">
+        <button id="ask-mentor" class="bg-blue-600 text-white px-4 py-2 rounded">Ask Mentor</button>
+        <button id="roadmap-btn-mentor" class="bg-gray-100 px-4 py-2 rounded">Generate Roadmap</button>
+      </div>
+
+      <div id="mentor-reply" class="mt-4 text-sm muted"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white py-12 mt-12">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <p>© 2025 CareerAI. All rights reserved.</p>
+      <p class="text-sm text-gray-400">Made with ❤️ to help job seekers succeed.</p>
+    </div>
+  </footer>
+
+  <!-- html2pdf for Export PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+  <!-- FIREBASE + APP LOGIC -->
+  <script type="module">
+    // ---------- FIREBASE (client) ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    // ---------- FIREBASE CONFIG (corrected storageBucket) ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
+      authDomain: "job5x-472810.firebaseapp.com",
+      projectId: "job5x-472810",
+      storageBucket: "job5x-472810.appspot.com", // <<-- fixed here
+      messagingSenderId: "927725128020",
+      appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
+      measurementId: "G-FKT33RHQ9M"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // UI refs
+    const signinBtn = document.getElementById('signin-btn');
+    const signoutBtn = document.getElementById('signout-btn');
+    const profileBlock = document.getElementById('profile-block');
+    const profilePic = document.getElementById('profile-pic');
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+
+    // modal refs
+    const startFree = document.getElementById('start-free');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const closeModal = document.getElementById('close-modal');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const exportBtn = document.getElementById('export-btn');
+    const modalJob = document.getElementById('modal-job');
+    const modalSummary = document.getElementById('modal-summary');
+    const modalSkills = document.getElementById('modal-skills');
+    const modalExperience = document.getElementById('modal-experience');
+    const modalEducation = document.getElementById('modal-education');
+    const modalStatus = document.getElementById('modal-status');
+    const aiAnalysis = document.getElementById('ai-analysis');
+
+    // preview refs
+    const previewName = document.getElementById('preview-name');
+    const previewTitle = document.getElementById('preview-title');
+    const previewSummary = document.getElementById('preview-summary');
+    const previewSkills = document.getElementById('preview-skills');
+    const previewExperience = document.getElementById('preview-experience');
+    const previewEducation = document.getElementById('preview-education');
+    const previewAISuggestions = document.getElementById('preview-ai-suggestions');
+
+    // mentor
+    const mentorBackdrop = document.getElementById('mentor-backdrop');
+    const closeMentor = document.getElementById('close-mentor');
+    const mentorInput = document.getElementById('mentor-input');
+    const askMentor = document.getElementById('ask-mentor');
+    const mentorReply = document.getElementById('mentor-reply');
+    const roadmapBtnMentor = document.getElementById('roadmap-btn-mentor');
+
+    // dashboard elements
+    const sidebarName = document.getElementById('sidebar-name');
+    const sidebarAvatar = document.getElementById('sidebar-avatar');
+    const resumeScoreEl = document.getElementById('resume-score');
+    const resumeProgressBar = document.getElementById('resume-progress');
+    const cardScore = document.getElementById('card-score');
+    const cardScoreText = document.getElementById('card-score-text');
+    const mentorSnapshot = document.getElementById('mentor-snapshot');
+    const interviewText = document.getElementById('interview-text');
+
+    // other
+    const features = document.querySelectorAll('.feature-card');
+
+    const AI_ENDPOINT = '/.netlify/functions/resume'; // Netlify function path
+
+    // SIGN IN / OUT
+    signinBtn?.addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (e) {
+        alert('Sign-in error: ' + e.message);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // show profile block
+        signinBtn.style.display = 'none';
+        profileBlock.classList.remove('hidden');
+        profileBlock.style.display = 'flex';
+        profilePic.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName||"User")}`;
+        profileName.textContent = user.displayName || user.email;
+        profileEmail.textContent = user.email || '';
+        sidebarName.textContent = user.displayName || user.email;
+        sidebarAvatar.innerHTML = `<img src="${profilePic.src}" class="avatar-sm">`;
+      } else {
+        signinBtn.style.display = 'inline-block';
+        profileBlock.style.display = 'none';
+        profileBlock.classList.add('hidden');
+        sidebarName.textContent = 'Guest';
+        sidebarAvatar.innerHTML = `<div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">U</div>`;
+      }
+    });
+
+    // sign out (delegated via event listener because signout btn is created dynamically)
+    document.body.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'signout-btn') {
+        signOut(auth);
+      }
+    });
+
+    // Helpers
+    function openModal() { modalBackdrop.classList.remove('hidden'); modalBackdrop.style.display = 'flex'; }
+    function closeModalFunc() { modalBackdrop.classList.add('hidden'); modalBackdrop.style.display = 'none'; }
+    function openMentor() { mentorBackdrop.classList.remove('hidden'); mentorBackdrop.style.display = 'flex'; }
+    function closeMentorFunc() { mentorBackdrop.classList.add('hidden'); mentorBackdrop.style.display = 'none'; }
+
+    function setBusy(msg) { modalStatus.textContent = msg; }
+    function clearBusy() { modalStatus.textContent = ''; }
+
+    // Feature card clicks — opens modal or runs action
+    features.forEach(card => {
+      card.addEventListener('click', () => {
+        const action = card.dataset.action;
+        if (action === 'resume') {
+          // open the resume modal
+          document.getElementById('modal-title').textContent = 'AI Resume & Cover Letter';
+          openModal();
+        } else if (action === 'mentor') {
+          openMentor();
+        } else {
+          // for other features, open the modal and preset action in title/job field
+          document.getElementById('modal-title').textContent = humanTitle(action);
+          modalJob.value = '';
+          modalSummary.value = '';
+          openModal();
+        }
+        // save chosen action for modal submit
+        modalBackdrop.dataset.action = action;
       });
-      const data = await res.json();
-      const output = document.getElementById("output");
-      output.style.display = "block";
-      output.innerText = data.aiReply || data.error || "Something went wrong.";
+    });
+
+    // Close modal handlers
+    closeModal.addEventListener('click', closeModalFunc);
+    closeMentor.addEventListener('click', closeMentorFunc);
+
+    // Human-readable titles
+    function humanTitle(action) {
+      const map = {
+        resume: 'AI Resume & Cover Letter',
+        mentor: 'AI Mentor Mode',
+        roadmap: 'Job Roadmap',
+        interview: 'Interview Practice',
+        insights: 'Career Insights',
+        quiz: 'Skill Quiz',
+        community: 'Community Hub',
+        portfolio: 'Portfolio Ideas',
+        coverLetter: 'AI Cover Letter',
+        tracker: 'Job Tracker'
+      };
+      return map[action] || action;
     }
+
+    // Call Netlify function with action and payload
+    async function callAI(action, payload = {}) {
+      try {
+        const res = await fetch(AI_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, ...payload })
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          console.error('Function error', json);
+          return { error: json.error || 'Function error' };
+        }
+        return { aiReply: json.aiReply || json.result || JSON.stringify(json) };
+      } catch (err) {
+        console.error('Network error', err);
+        return { error: err.message || 'Network error' };
+      }
+    }
+
+    // Analyze button (Resume action)
+    analyzeBtn.addEventListener('click', async () => {
+      const action = modalBackdrop.dataset.action || 'resume';
+      const job = modalJob.value.trim();
+      const details = [
+        modalSummary.value.trim(),
+        `Skills: ${modalSkills.value.trim()}`,
+        `Experience: ${modalExperience.value.trim()}`,
+        `Education: ${modalEducation.value.trim()}`
+      ].join('\n');
+
+      if (!job) { alert('Enter target job role'); return; }
+      setBusy('Analyzing with AI…'); analyzeBtn.disabled = true;
+
+      const result = await callAI('resume', { job, details });
+      analyzeBtn.disabled = false; clearBusy();
+
+      if (result.error) {
+        aiAnalysis.textContent = 'Error: ' + result.error;
+        return;
+      }
+
+      // aiReply is expected to be either structured JSON or plain text
+      const raw = result.aiReply;
+      aiAnalysis.textContent = raw;
+
+      // Try parse JSON if AI sent structured data
+      let parsed = null;
+      try { parsed = JSON.parse(raw); } catch (e) { parsed = null; }
+
+      // Fill preview: prefer structured fields if available
+      if (parsed && (parsed.improved_summary || parsed.score || parsed.missing_skills)) {
+        previewSummary.textContent = parsed.improved_summary || modalSummary.value || '';
+        previewSkills.innerHTML = '';
+        (parsed.missing_skills || (modalSkills.value.split(',').map(s=>s.trim()).filter(Boolean))).forEach(s => {
+          previewSkills.insertAdjacentHTML('beforeend', `<li>${s}</li>`);
+        });
+        previewExperience.innerHTML = (modalExperience.value || '').split('\n').map(x=>`<div class="mb-2">${x}</div>`).join('');
+        previewEducation.textContent = modalEducation.value || '';
+        previewAISuggestions.textContent = (parsed.suggestions || []).join(' • ');
+
+        // update dashboard score
+        const score = parsed.score || 0;
+        cardScore.textContent = score;
+        resumeScoreEl.textContent = `${score}/100`;
+        resumeProgressBar.style.width = Math.min(100, score) + '%';
+        cardScoreText.textContent = parsed.summary_text || 'AI analysis';
+
+      } else {
+        // fallback — create a simple preview using provided inputs plus AI text inserted under summary
+        previewName.textContent = auth.currentUser ? (auth.currentUser.displayName || 'You') : 'Your Name';
+        previewTitle.textContent = job;
+        previewSummary.textContent = modalSummary.value || raw.split('\n').slice(0,3).join(' ');
+        previewSkills.innerHTML = (modalSkills.value.split(',').map(s=>s.trim()).filter(Boolean)).map(s=>`<li>${s}</li>`).join('');
+        previewExperience.innerHTML = (modalExperience.value || '').split('\n').map(x=>`<div>${x}</div>`).join('');
+        previewEducation.textContent = modalEducation.value || '';
+        previewAISuggestions.textContent = 'AI Notes: ' + (raw.slice(0,400) + (raw.length>400 ? '…':'' ));
+        // set some score heuristics (simple)
+        const heurScore = Math.min(90, 50 + (modalSkills.value.split(',').filter(Boolean).length * 8));
+        cardScore.textContent = heurScore;
+        resumeScoreEl.textContent = `${heurScore}/100`;
+        resumeProgressBar.style.width = heurScore + '%';
+        cardScoreText.textContent = 'AI quick analysis';
+      }
+
+      // keep AI text in analysis pane
+      aiAnalysis.textContent = raw;
+    });
+
+    // Export PDF
+    exportBtn.addEventListener('click', async () => {
+      const el = document.getElementById('resume-preview');
+      modalStatus.textContent = 'Preparing PDF…';
+      try {
+        const opt = { margin:0.25, filename:'resume.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+        html2pdf().set(opt).from(el).save();
+        modalStatus.textContent = 'Exported';
+      } catch (e) {
+        modalStatus.textContent = 'Export error';
+        console.error(e);
+      }
+    });
+
+    // Mentor actions
+    document.getElementById('chat-mentor').addEventListener('click', () => {
+      openMentor();
+      mentorInput.value = 'I want to improve my resume for data scientist roles';
+    });
+
+    askMentor.addEventListener('click', async () => {
+      const text = mentorInput.value.trim();
+      if (!text) return alert('Ask a question');
+      mentorReply.textContent = 'Thinking…';
+      const res = await callAI('mentor', { text });
+      if (res.error) mentorReply.textContent = 'Error: ' + res.error;
+      else mentorReply.textContent = res.aiReply;
+      // set a short snapshot
+      mentorSnapshot.textContent = res.aiReply.split('\n').slice(0,2).join(' ');
+    });
+
+    roadmapBtnMentor.addEventListener('click', async () => {
+      const role = modalJob.value.trim() || prompt('Which job role?');
+      if (!role) return;
+      mentorReply.textContent = 'Generating roadmap…';
+      const res = await callAI('roadmap', { job: role, details: '' });
+      if (res.error) mentorReply.textContent = 'Error: ' + res.error;
+      else mentorReply.textContent = res.aiReply;
+    });
+
+    // Interview mock
+    document.getElementById('start-mock').addEventListener('click', async () => {
+      const role = modalJob.value.trim() || prompt('Job role for interview?') || 'Software Engineer';
+      interviewText.textContent = 'Generating questions…';
+      const res = await callAI('interview', { job: role });
+      if (res.error) interviewText.textContent = 'Error: ' + res.error;
+      else interviewText.textContent = res.aiReply;
+    });
+
+    // Start Free opens resume modal
+    startFree.addEventListener('click', () => {
+      document.getElementById('modal-title').textContent = 'AI Resume & Cover Letter';
+      modalBackdrop.dataset.action = 'resume';
+      openModal();
+    });
+
+    // Close modals on click outside
+    window.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModalFunc();
+      if (e.target === mentorBackdrop) closeMentorFunc();
+    });
+
+    // Debug: initial content
+    previewName.textContent = 'Your Name';
+    previewTitle.textContent = 'Desired Role';
+    previewSummary.textContent = 'Write a short summary or click Analyze to have AI generate an improved summary.';
+    previewSkills.innerHTML = '<li>Python</li><li>SQL</li>';
+    previewExperience.innerHTML = '<div>Example: Data Analyst @ Company | 2022-2024 | Built dashboards</div>';
+    previewEducation.textContent = 'Degree — University';
+
   </script>
 </body>
 </html>
