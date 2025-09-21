@@ -1,1 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sign up — CareerAI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+
+  <div class="max-w-md w-full bg-white p-8 rounded-lg shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Create Account</h2>
+
+    <label class="block text-sm">Full name</label>
+    <input id="name" class="w-full border rounded p-2 mb-3">
+
+    <label class="block text-sm">Email</label>
+    <input id="email" class="w-full border rounded p-2 mb-3" type="email">
+
+    <label class="block text-sm">Password</label>
+    <input id="password" class="w-full border rounded p-2 mb-4" type="password">
+
+    <button id="signupBtn" class="w-full bg-blue-600 text-white py-2 rounded mb-3">Sign up</button>
+
+    <p class="mt-4 text-center text-sm">
+      Already have an account? <a href="login.html" class="text-blue-600">Log in</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
+      authDomain: "job5x-472810.firebaseapp.com",
+      projectId: "job5x-472810",
+      storageBucket: "job5x-472810.appspot.com",
+      messagingSenderId: "927725128020",
+      appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
+      measurementId: "G-FKT33RHQ9M"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById('signupBtn').addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!name || !email || !password) return alert('Fill all fields');
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(cred.user, { displayName: name });
+        await setDoc(doc(db, "users", cred.user.uid), {
+          name,
+          email,
+          createdAt: serverTimestamp()
+        });
+        window.location.href = "index.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
+</html>
 
