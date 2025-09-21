@@ -1,27 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CareerAI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="bg-gradient-to-b from-gray-50 to-gray-100 text-gray-900">
-
+<body>
   <!-- Header -->
   <header class="flex items-center justify-between p-6 bg-white shadow-md sticky top-0 z-50">
-    <h1 class="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-      Career<span class="text-blue-800">AI</span>
-    </h1>
+    <h1 class="text-2xl font-extrabold text-blue-700">CareerAI</h1>
     <nav class="space-x-6 font-medium flex items-center">
       <a href="#features" class="hover:text-blue-600 transition">Features</a>
       <a href="#pricing" class="hover:text-blue-600 transition">Pricing</a>
       <a href="#faq" class="hover:text-blue-600 transition">FAQ</a>
-      <!-- Google Login Button -->
-      <div id="googleLoginBtn"></div>
+      <button id="login-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Sign in with Google</button>
+      <button id="logout-btn" class="hidden bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Logout</button>
     </nav>
   </header>
 
@@ -38,67 +32,91 @@
   </section>
 
   <!-- Dashboard -->
-  <section class="bg-white py-12">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-extrabold mb-6">Your Dashboard</h2>
-      <img id="userPic" class="h-16 w-16 mx-auto rounded-full border mb-4" alt="Profile">
-      <p class="text-xl font-semibold">Welcome, <span id="userName">Guest</span></p>
-      <p class="text-gray-600">Email: <span id="userEmail">Not logged in</span></p>
-      <div class="mt-6 bg-gray-100 p-6 rounded-xl">
-        <p>Resume Score: <span class="font-semibold">65/100</span></p>
-        <p>Roadmap Progress: Step 2 of 5</p>
-        <p>Active Applications: 4 (2 interviews scheduled)</p>
-      </div>
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-6">Welcome, <span id="user-name">Guest</span></h2>
+      <img id="user-pic" class="mx-auto rounded-full w-20 h-20 hidden" />
+      <p id="user-email" class="text-gray-600"></p>
     </div>
   </section>
 
-  <!-- Pricing -->
-  <section id="pricing" class="py-24 bg-gradient-to-r from-blue-100 to-blue-200 text-center">
-    <h2 class="text-4xl font-extrabold mb-6">💰 Pricing</h2>
-    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto px-6">
-      <div class="p-8 shadow-lg rounded-2xl bg-white">
-        <h3 class="font-bold text-xl mb-3">Free</h3>
-        <p class="text-sm text-gray-600 mb-5">Basic resume & 1 roadmap</p>
-        <button class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">Start Free</button>
-      </div>
-      <div class="p-8 shadow-lg rounded-2xl bg-white border-2 border-blue-600 relative">
-        <span class="absolute -top-3 right-3 bg-blue-600 text-white text-xs px-3 py-1 rounded-full">Most Popular</span>
-        <h3 class="font-bold text-xl mb-3">Pro</h3>
-        <p class="text-sm text-gray-600 mb-5">Unlimited resumes, AI mentor, quizzes, roadmaps, interviews</p>
-        <button class="bg-blue-600 text-white hover:bg-blue-700 shadow-md px-4 py-2 rounded">Get Pro</button>
-      </div>
-      <div class="p-8 shadow-lg rounded-2xl bg-white">
-        <h3 class="font-bold text-xl mb-3">Premium</h3>
-        <p class="text-sm text-gray-600 mb-5">All Pro features + live mentor sessions + priority support</p>
-        <button class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">Get Premium</button>
-      </div>
-    </div>
-  </section>
+  <!-- Firebase SDKs -->
+  <script type="module">
+    // Import Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } 
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-12 text-center mt-12">
-    <p>© 2025 CareerAI. All rights reserved.</p>
-  </footer>
-
-  <!-- Google Login Script -->
-  <script>
-    function handleCredentialResponse(response) {
-      const data = jwt_decode(response.credential);
-      document.getElementById("userName").innerText = data.name;
-      document.getElementById("userEmail").innerText = data.email;
-      document.getElementById("userPic").src = data.picture;
-    }
-
-    window.onload = function () {
-      google.accounts.id.initialize({
-        client_id: "927725128020-g85dp4fc65qnl0m9kq88s98p0g1aqsn3.apps.googleusercontent.com", // your Client ID
-        callback: handleCredentialResponse
-      });
-      google.accounts.id.renderButton(
-        document.getElementById("googleLoginBtn"),
-        { theme: "outline", size: "large" }
-      );
+    // Firebase config (your keys)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
+      authDomain: "job5x-472810.firebaseapp.com",
+      projectId: "job5x-472810",
+      storageBucket: "job5x-472810.firebasestorage.app",
+      messagingSenderId: "927725128020",
+      appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
+      measurementId: "G-FKT33RHQ9M"
     };
+
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
+
+    // DOM elements
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userName = document.getElementById("user-name");
+    const userEmail = document.getElementById("user-email");
+    const userPic = document.getElementById("user-pic");
+
+    // Login
+    loginBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Save user in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+          lastLogin: new Date().toISOString()
+        });
+
+        console.log("User logged in:", user.displayName);
+      } catch (error) {
+        console.error("Login error", error);
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    // Auth state change listener
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userName.textContent = user.displayName;
+        userEmail.textContent = user.email;
+        if (user.photoURL) {
+          userPic.src = user.photoURL;
+          userPic.classList.remove("hidden");
+        }
+        loginBtn.classList.add("hidden");
+        logoutBtn.classList.remove("hidden");
+      } else {
+        userName.textContent = "Guest";
+        userEmail.textContent = "";
+        userPic.classList.add("hidden");
+        loginBtn.classList.remove("hidden");
+        logoutBtn.classList.add("hidden");
+      }
+    });
   </script>
 </body>
 </html>
