@@ -1,1 +1,87 @@
 
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login — CareerAI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+
+  <div class="max-w-md w-full bg-white p-8 rounded-lg shadow">
+    <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+
+    <label class="block text-sm">Email</label>
+    <input id="email" class="w-full border rounded p-2 mb-3" type="email">
+
+    <label class="block text-sm">Password</label>
+    <input id="password" class="w-full border rounded p-2 mb-4" type="password">
+
+    <button id="loginBtn" class="w-full bg-blue-600 text-white py-2 rounded mb-3">Login</button>
+
+    <p class="text-center text-sm text-gray-500 mb-3">or</p>
+
+    <button id="googleBtn" class="w-full bg-white border py-2 rounded flex items-center justify-center gap-2">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Continue with Google
+    </button>
+
+    <p class="mt-4 text-center text-sm">
+      New here? <a href="signup.html" class="text-blue-600">Create an account</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvy0adQdoosf5a_63QOPsV6X8v8rq66Sc",
+      authDomain: "job5x-472810.firebaseapp.com",
+      projectId: "job5x-472810",
+      storageBucket: "job5x-472810.appspot.com",
+      messagingSenderId: "927725128020",
+      appId: "1:927725128020:web:5ad79c445c0fe8010820c1",
+      measurementId: "G-FKT33RHQ9M"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const emailField = document.getElementById('email');
+    const passField = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const googleBtn = document.getElementById('googleBtn');
+
+    loginBtn.addEventListener('click', async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailField.value, passField.value);
+        window.location.href = "index.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    googleBtn.addEventListener('click', async () => {
+      const provider = new GoogleAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        await setDoc(doc(db, "users", result.user.uid), {
+          name: result.user.displayName,
+          email: result.user.email,
+          photo: result.user.photoURL,
+          updatedAt: serverTimestamp()
+        }, { merge: true });
+        window.location.href = "index.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
