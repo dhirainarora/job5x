@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
-import { Input } from "./components/ui/input"; // (we’ll create this later if needed)
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { motion } from "framer-motion";
 import {
@@ -39,7 +38,9 @@ function CareerDashboard() {
             <div className="w-full bg-gray-200 rounded-full h-3">
               <div className="bg-blue-600 h-3 rounded-full" style={{ width: "65%" }} />
             </div>
-            <p className="mt-2 text-sm">Score: <span className="font-semibold">65/100</span></p>
+            <p className="mt-2 text-sm">
+              Score: <span className="font-semibold">65/100</span>
+            </p>
           </div>
 
           <div className="mb-4">
@@ -53,8 +54,12 @@ function CareerDashboard() {
           <Button className="w-full bg-blue-600 text-white">Upgrade for Full Feedback</Button>
 
           <div className="mt-6 text-sm text-gray-500">
-            <p className="mb-2"><strong>Next action:</strong> Add a quantified achievement to Work Experience.</p>
-            <p className="mb-1">Deadline: <span className="font-medium">2 days</span></p>
+            <p className="mb-2">
+              <strong>Next action:</strong> Add a quantified achievement to Work Experience.
+            </p>
+            <p className="mb-1">
+              Deadline: <span className="font-medium">2 days</span>
+            </p>
           </div>
         </aside>
 
@@ -109,9 +114,15 @@ export default function CareerAIApp() {
       <header className="flex items-center justify-between p-6 bg-white shadow-md sticky top-0 z-50">
         <h1 className="text-2xl font-extrabold text-blue-700">CareerAI</h1>
         <nav className="space-x-6 font-medium">
-          <a href="#features" className="hover:text-blue-600 transition">Features</a>
-          <a href="#pricing" className="hover:text-blue-600 transition">Pricing</a>
-          <a href="#faq" className="hover:text-blue-600 transition">FAQ</a>
+          <a href="#features" className="hover:text-blue-600 transition">
+            Features
+          </a>
+          <a href="#pricing" className="hover:text-blue-600 transition">
+            Pricing
+          </a>
+          <a href="#faq" className="hover:text-blue-600 transition">
+            FAQ
+          </a>
           <Button className="bg-blue-600 text-white hover:bg-blue-700">Login</Button>
         </nav>
       </header>
@@ -130,11 +141,13 @@ export default function CareerAIApp() {
           Your all-in-one AI-powered career co-pilot: resumes, interviews, skill growth, job tracking, and more.
         </p>
         <motion.div whileHover={{ scale: 1.05 }}>
-          <Button size="lg" className="px-12 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg rounded-xl">
+          <Button className="px-12 py-6 text-lg bg-blue-600 text-white hover:bg-blue-700 shadow-lg rounded-xl">
             Start Free Today
           </Button>
         </motion.div>
-        <p className="mt-4 text-sm text-gray-600 font-medium">⚡ Early Bird Offer: 70% Off First 100 Users</p>
+        <p className="mt-4 text-sm text-gray-600 font-medium">
+          ⚡ Early Bird Offer: 70% Off First 100 Users
+        </p>
       </section>
 
       {/* Dashboard Preview */}
