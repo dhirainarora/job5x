@@ -177,7 +177,320 @@ export default function CareerAIPreview() {
       </section>
 
       {/* FEATURES */}
-      {/* ... rest of your component continues exactly as you pasted before ... */}
+      <section className="max-w-7xl mx-auto px-6 py-8">
+        <h3 className="text-2xl font-bold">What CareerAI does differently</h3>
+        <p className="text-slate-500 mt-2 max-w-2xl">An end-to-end AI job accelerator built for college grads and anyone struggling to find a role.</p>
+
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {features.map((f, idx) => {
+            const Icon = f.icon;
+            return (
+              <motion.div key={idx} whileHover={{ y: -6 }} className="bg-white border rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-indigo-50">
+                    <Icon className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">{f.title}</h4>
+                    <p className="text-sm text-slate-500">{f.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* PROMINENT CTA */}
+      <section className="max-w-7xl mx-auto px-6 py-8">
+        <div className="bg-indigo-700 rounded-2xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-2xl font-bold">Ready to stop applying aimlessly?</h3>
+            <p className="text-slate-100 mt-2">Let AI apply, train and coach you — so you only interview where you’ll win.</p>
+          </div>
+          <div className="flex gap-3">
+            <button className="bg-white text-indigo-700 px-5 py-3 rounded-md font-semibold">Start Free</button>
+            <button className="border border-white px-5 py-3 rounded-md">Book Demo</button>
+          </div>
+        </div>
+      </section>
+
+      {/* DASHBOARD + TABS */}
+      <section className="max-w-7xl mx-auto px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <aside className="col-span-1 bg-white border rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Welcome</p>
+                <p className="font-semibold">Dhirain</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-slate-400">Streak</p>
+                <p className="font-semibold">7 🔥</p>
+              </div>
+            </div>
+
+            <nav className="mt-6 space-y-2">
+              <button onClick={() => setTab("overview")} className={`w-full text-left p-2 rounded-md ${tab === 'overview' ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}>
+                <div className="flex items-center gap-2"><LayoutGrid className="text-indigo-600"/><span>Overview</span></div>
+              </button>
+              <button onClick={() => setTab("resume")} className={`w-full text-left p-2 rounded-md ${tab === 'resume' ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}>
+                <div className="flex items-center gap-2"><FileText className="text-indigo-600"/><span>Resume</span></div>
+              </button>
+              <button onClick={() => setTab("skills")} className={`w-full text-left p-2 rounded-md ${tab === 'skills' ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}>
+                <div className="flex items-center gap-2"><Database className="text-indigo-600"/><span>Skills</span></div>
+              </button>
+              <button onClick={() => setTab("interview")} className={`w-full text-left p-2 rounded-md ${tab === 'interview' ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}>
+                <div className="flex items-center gap-2"><UserCheck className="text-indigo-600"/><span>Interview</span></div>
+              </button>
+              <button onClick={() => setTab("hustles")} className={`w-full text-left p-2 rounded-md ${tab === 'hustles' ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}>
+                <div className="flex items-center gap-2"><Briefcase className="text-indigo-600"/><span>Side Hustles</span></div>
+              </button>
+            </nav>
+
+            <div className="mt-6 text-xs text-slate-400">
+              <p>Account: Free</p>
+              <p>Applications: 12 this month</p>
+            </div>
+          </aside>
+
+          <main className="lg:col-span-2">
+            <div className="bg-white border rounded-lg p-6 shadow-sm">
+              {tab === 'overview' && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold">Overview</h4>
+                    <div className="flex items-center gap-2">
+                      <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search jobs, skills..." className="px-3 py-2 border rounded-md text-sm" />
+                      <button className="px-3 py-2 rounded-md border">Filter</button>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-400">Active</p>
+                      <p className="font-semibold text-lg">3</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-400">Avg ATS Score</p>
+                      <p className="font-semibold text-lg">84%</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-400">Skill Progress</p>
+                      <p className="font-semibold text-lg">40%</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <h5 className="font-semibold">Recent Applications</h5>
+                    <div className="mt-3 space-y-3">
+                      {mockJobs.map((j) => (
+                        <div key={j.id} className="p-3 rounded-lg flex items-center justify-between bg-slate-50">
+                          <div>
+                            <p className="font-medium">{j.title}</p>
+                            <p className="text-xs text-slate-400">{j.company}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-slate-400">{j.stage}</p>
+                            <p className={`font-semibold ${j.ats > 85 ? 'text-emerald-600' : j.ats > 75 ? 'text-amber-600' : 'text-rose-600'}`}>{j.ats}%</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {tab === 'resume' && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold">Resume + ATS Booster</h4>
+                    <div className="text-sm text-slate-400">Upload → Optimize → Score</div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-400">Uploaded Resume</p>
+                      <div className="mt-2 p-3 bg-white rounded-md border">resume_dhirain.pdf</div>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="text-xs text-slate-400">Current ATS Score</p>
+                      <p className="font-bold text-3xl mt-2">72%</p>
+                      <p className="text-sm text-slate-500 mt-2">Suggested fixes: add keywords "SQL", "Data Analysis" • shorten experience lines</p>
+                      <div className="mt-3 flex gap-2">
+                        <button className="px-3 py-2 bg-indigo-600 text-white rounded-md">Auto-Optimize</button>
+                        <button className="px-3 py-2 border rounded-md">View Suggestions</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {tab === 'skills' && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold">Skill Fixer</h4>
+                    <div className="text-sm text-slate-400">Micro-lessons • 10–30 min</div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="font-medium">SQL Fundamentals</p>
+                      <p className="text-xs text-slate-400">Progress: 20%</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="font-medium">Excel for Analysts</p>
+                      <p className="text-xs text-slate-400">Progress: 10%</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="font-medium">Communication: Answers</p>
+                      <p className="text-xs text-slate-400">Progress: 50%</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {tab === 'interview' && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold">Interview Coach</h4>
+                    <div className="text-sm text-slate-400">Mock interviews • Voice & Video</div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="font-medium">Next Mock</p>
+                      <p className="text-xs text-slate-400">Full-stack recruiter simulation • Sep 25, 2025</p>
+                      <div className="mt-3">
+                        <button className="px-4 py-2 bg-indigo-600 text-white rounded-md">Start Mock</button>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-lg">
+                      <p className="font-medium">Feedback Snapshot</p>
+                      <p className="text-xs text-slate-400 mt-2">Tone: Improve • Keywords: missing</p>
+                      <div className="mt-2 text-sm text-slate-500">Suggested: add examples, highlight results.</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {tab === 'hustles' && (
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold">Side-Hustle Finder</h4>
+                    <div className="text-sm text-slate-400">Freelance gigs matched to your profile</div>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">Data-entry • Remote</p>
+                          <p className="text-xs text-slate-400">Est. pay: $120/week</p>
+                        </div>
+                        <div>
+                          <button className="px-3 py-1 rounded-md border">Apply</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-slate-50 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium">Website QA • Remote</p>
+                          <p className="text-xs text-slate-400">Est. pay: $160/week</p>
+                        </div>
+                        <div>
+                          <button className="px-3 py-1 rounded-md border">Apply</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Secondary panels */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-white border rounded-lg shadow-sm">
+                <p className="text-xs text-slate-400">Community Challenge</p>
+                <p className="font-semibold mt-2">Interview Sprint — 48h</p>
+                <p className="text-xs text-slate-400 mt-2">Leaderboard: you - #12</p>
+              </div>
+              <div className="p-4 bg-white border rounded-lg shadow-sm">
+                <p className="text-xs text-slate-400">Recommended Learning</p>
+                <p className="font-semibold mt-2">SQL for Beginners — 12 lessons</p>
+              </div>
+              <div className="p-4 bg-white border rounded-lg shadow-sm">
+                <p className="text-xs text-slate-400">Quick Tip</p>
+                <p className="font-semibold mt-2">Add numbers to your resume — hiring managers love metrics.</p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h3 className="text-2xl font-bold">Pricing</h3>
+        <p className="text-slate-500 mt-2">Free, Pro and Premium plans designed for students and job-seekers.</p>
+
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 border rounded-xl bg-white text-center">
+            <p className="text-sm text-slate-400">Free</p>
+            <p className="text-2xl font-bold mt-2">$0</p>
+            <ul className="mt-4 text-sm space-y-2 text-slate-600">
+              <li>Basic resume tools</li>
+              <li>5 job applies/week</li>
+              <li>Limited mock interviews</li>
+            </ul>
+            <div className="mt-4">
+              <button className="px-4 py-2 border rounded-md">Get Started</button>
+            </div>
+          </div>
+
+          <div className="p-6 border rounded-xl bg-white text-center shadow-md">
+            <p className="text-sm text-slate-400">Pro</p>
+            <p className="text-2xl font-bold mt-2">$29 / mo</p>
+            <ul className="mt-4 text-sm space-y-2 text-slate-600">
+              <li>Unlimited tailored resumes</li>
+              <li>100 job applies/week (autopilot)</li>
+              <li>Full interview coach</li>
+            </ul>
+            <div className="mt-4">
+              <button className="px-4 py-2 bg-indigo-600 text-white rounded-md">Choose Pro</button>
+            </div>
+          </div>
+
+          <div className="p-6 border rounded-xl bg-white text-center">
+            <p className="text-sm text-slate-400">Premium</p>
+            <p className="text-2xl font-bold mt-2">$59 / mo</p>
+            <ul className="mt-4 text-sm space-y-2 text-slate-600">
+              <li>Everything in Pro</li>
+              <li>Side-hustle finder</li>
+              <li>Priority support + community boosts</li>
+            </ul>
+            <div className="mt-4">
+              <button className="px-4 py-2 border rounded-md">Choose Premium</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="max-w-7xl mx-auto px-6 py-8 text-sm text-slate-500">
+        <div className="flex items-center justify-between">
+          <div>
+            <p>© {new Date().getFullYear()} CareerAI • Built for grads and job-seekers</p>
+          </div>
+          <div className="flex gap-4">
+            <p>Privacy</p>
+            <p>Terms</p>
+            <p>Contact</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
+
