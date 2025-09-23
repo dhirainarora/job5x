@@ -31,7 +31,7 @@ export default function CareerAIPreview() {
     { title: "Side-Hustle Finder", desc: "Freelance gigs to start earning while you land your full-time role.", icon: Briefcase },
   ];
 
-  // --- Handlers that call Netlify Functions ---
+  // --- Handlers for Netlify Functions ---
   const handleAutoOptimize = async () => {
     try {
       const resp = await fetch("/.netlify/functions/resume-optimize", {
@@ -43,7 +43,7 @@ export default function CareerAIPreview() {
         }),
       });
       const data = await resp.json();
-      alert("Suggested keywords to add: " + (data.suggestions?.join(", ") || "none"));
+      alert("Suggested keywords: " + (data.suggestions?.join(", ") || "none"));
     } catch (err) {
       alert("Error optimizing resume: " + err.message);
     }
@@ -146,14 +146,101 @@ export default function CareerAIPreview() {
         </motion.div>
       </section>
 
-      {/* --- The rest of your design stays unchanged (features, dashboard tabs, pricing, footer) --- */}
-      {/* Just update Auto-Optimize button in Resume tab: */}
-      {/* Inside Resume tab section */}
-      {tab === 'resume' && (
-        <div className="p-4">
-          <button onClick={handleAutoOptimize} className="px-3 py-2 bg-indigo-600 text-white rounded-md">Auto-Optimize</button>
+      {/* FEATURES */}
+      <section className="max-w-7xl mx-auto px-6 py-8">
+        <h3 className="text-2xl font-bold">What CareerAI does differently</h3>
+        <p className="text-slate-500 mt-2 max-w-2xl">An end-to-end AI job accelerator built for college grads and anyone struggling to find a role.</p>
+
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {features.map((f, idx) => {
+            const Icon = f.icon;
+            return (
+              <motion.div key={idx} whileHover={{ y: -6 }} className="bg-white border rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-indigo-50">
+                    <Icon className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">{f.title}</h4>
+                    <p className="text-sm text-slate-500">{f.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
-      )}
+      </section>
+
+      {/* DASHBOARD (only Resume button wired to AI) */}
+      <section className="max-w-7xl mx-auto px-6 py-10">
+        <div className="bg-white border rounded-lg p-6 shadow-sm">
+          <h4 className="font-semibold">Resume + ATS Booster</h4>
+          <p className="text-sm text-slate-500">Upload → Optimize → Score</p>
+          <div className="mt-4 flex gap-2">
+            <button onClick={handleAutoOptimize} className="px-3 py-2 bg-indigo-600 text-white rounded-md">Auto-Optimize</button>
+            <button className="px-3 py-2 border rounded-md">View Suggestions</button>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="max-w-7xl mx-auto px-6 py-12">
+        <h3 className="text-2xl font-bold">Pricing</h3>
+        <p className="text-slate-500 mt-2">Free, Pro and Premium plans designed for students and job-seekers.</p>
+
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-6 border rounded-xl bg-white text-center">
+            <p className="text-sm text-slate-400">Free</p>
+            <p className="text-2xl font-bold mt-2">$0</p>
+            <ul className="mt-4 text-sm space-y-2 text-slate-600">
+              <li>Basic resume tools</li>
+              <li>5 job applies/week</li>
+              <li>Limited mock interviews</li>
+            </ul>
+            <div className="mt-4">
+              <button className="px-4 py-2 border rounded-md">Get Started</button>
+            </div>
+          </div>
+
+          <div className="p-6 border rounded-xl bg-white text-center shadow-md">
+            <p className="text-sm text-slate-400">Pro</p>
+            <p className="text-2xl font-bold mt-2">$29 / mo</p>
+            <ul className="mt-4 text-sm space-y-2 text-slate-600">
+              <li>Unlimited tailored resumes</li>
+              <li>100 job applies/week (autopilot)</li>
+              <li>Full interview coach</li>
+            </ul>
+            <div className="mt-4">
+              <button className="px-4 py-2 bg-indigo-600 text-white rounded-md">Choose Pro</button>
+            </div>
+          </div>
+
+          <div className="p-6 border rounded-xl bg-white text-center">
+            <p className="text-sm text-slate-400">Premium</p>
+            <p className="text-2xl font-bold mt-2">$59 / mo</p>
+            <ul className="mt-4 text-sm space-y-2 text-slate-600">
+              <li>Everything in Pro</li>
+              <li>Side-hustle finder</li>
+              <li>Priority support + community boosts</li>
+            </ul>
+            <div className="mt-4">
+              <button className="px-4 py-2 border rounded-md">Choose Premium</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="max-w-7xl mx-auto px-6 py-8 text-sm text-slate-500">
+        <div className="flex items-center justify-between">
+          <p>© {new Date().getFullYear()} CareerAI • Built for grads and job-seekers</p>
+          <div className="flex gap-4">
+            <p>Privacy</p>
+            <p>Terms</p>
+            <p>Contact</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
