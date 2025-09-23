@@ -15,6 +15,8 @@ import {
 export default function CareerAIPreview() {
   const [tab, setTab] = useState("overview");
   const [search, setSearch] = useState("");
+  const [autopilotResults, setAutopilotResults] = useState([]);
+  const [resumeSuggestions, setResumeSuggestions] = useState([]);
 
   const mockJobs = [
     { id: 1, title: "Junior Data Analyst", company: "Insight Labs", ats: 88, stage: "Applied", date: "Sep 16, 2025" },
@@ -31,7 +33,7 @@ export default function CareerAIPreview() {
     { title: "Side-Hustle Finder", desc: "Freelance gigs to start earning while you land your full-time role.", icon: Briefcase },
   ];
 
-  // --- Handlers for Netlify Functions ---
+  // Call Netlify Functions
   const handleAutoOptimize = async () => {
     try {
       const resp = await fetch("/.netlify/functions/resume-optimize", {
@@ -43,7 +45,7 @@ export default function CareerAIPreview() {
         }),
       });
       const data = await resp.json();
-      alert("Suggested keywords: " + (data.suggestions?.join(", ") || "none"));
+      setResumeSuggestions(data.suggestions || []);
     } catch (err) {
       alert("Error optimizing resume: " + err.message);
     }
@@ -57,7 +59,7 @@ export default function CareerAIPreview() {
         body: JSON.stringify({ jobs: mockJobs, threshold: 75 }),
       });
       const data = await resp.json();
-      alert("Autopilot results:\n" + JSON.stringify(data.results, null, 2));
+      setAutopilotResults(data.results || []);
     } catch (err) {
       alert("Error with autopilot: " + err.message);
     }
@@ -111,7 +113,7 @@ export default function CareerAIPreview() {
           </div>
         </div>
 
-        {/* Hero Right: Quick Dashboard Mock */}
+        {/* Hero Right: Dashboard preview */}
         <motion.div initial={{ scale: 0.98, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.15 }} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-lg">
           <div className="flex items-start justify-between">
             <div>
@@ -143,43 +145,56 @@ export default function CareerAIPreview() {
             <button onClick={handleAutopilot} className="flex-1 py-2 rounded-md bg-indigo-600 text-white">Open Dashboard</button>
             <button className="py-2 px-3 rounded-md border">Export</button>
           </div>
+
+          {/* Show Autopilot results in UI */}
+          {autopilotResults.length > 0 && (
+            <div className="mt-4 bg-slate-50 border rounded-lg p-4">
+              <h4 className="font-semibold mb-2">Autopilot Results</h4>
+              <ul className="space-y-2">
+                {autopilotResults.map((r) => (
+                  <li key={r.id} className="p-2 bg-white rounded-md flex justify-between">
+                    <span>{r.title} @ {r.company}</span>
+                    <span className={r.applied ? "text-emerald-600" : "text-rose-600"}>
+                      {r.applied ? "✅ Applied" : "❌ Skipped"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </motion.div>
       </section>
 
-      {/* FEATURES */}
-      <section className="max-w-7xl mx-auto px-6 py-8">
-        <h3 className="text-2xl font-bold">What CareerAI does differently</h3>
-        <p className="text-slate-500 mt-2 max-w-2xl">An end-to-end AI job accelerator built for college grads and anyone struggling to find a role.</p>
-
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map((f, idx) => {
-            const Icon = f.icon;
-            return (
-              <motion.div key={idx} whileHover={{ y: -6 }} className="bg-white border rounded-xl p-5 shadow-sm">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-lg bg-indigo-50">
-                    <Icon className="text-indigo-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">{f.title}</h4>
-                    <p className="text-sm text-slate-500">{f.desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* DASHBOARD (only Resume button wired to AI) */}
+      {/* DASHBOARD TABS */}
       <section className="max-w-7xl mx-auto px-6 py-10">
-        <div className="bg-white border rounded-lg p-6 shadow-sm">
-          <h4 className="font-semibold">Resume + ATS Booster</h4>
-          <p className="text-sm text-slate-500">Upload → Optimize → Score</p>
-          <div className="mt-4 flex gap-2">
-            <button onClick={handleAutoOptimize} className="px-3 py-2 bg-indigo-600 text-white rounded-md">Auto-Optimize</button>
-            <button className="px-3 py-2 border rounded-md">View Suggestions</button>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <aside className="col-span-1 bg-white border rounded-lg p-4 shadow-sm">
+            <nav className="space-y-2">
+              <button onClick={() => setTab("overview")} className={`w-full text-left p-2 rounded-md ${tab === 'overview' ? 'bg-indigo-50' : ''}`}>Overview</button>
+              <button onClick={() => setTab("resume")} className={`w-full text-left p-2 rounded-md ${tab === 'resume' ? 'bg-indigo-50' : ''}`}>Resume</button>
+              <button onClick={() => setTab("skills")} className={`w-full text-left p-2 rounded-md ${tab === 'skills' ? 'bg-indigo-50' : ''}`}>Skills</button>
+              <button onClick={() => setTab("interview")} className={`w-full text-left p-2 rounded-md ${tab === 'interview' ? 'bg-indigo-50' : ''}`}>Interview</button>
+              <button onClick={() => setTab("hustles")} className={`w-full text-left p-2 rounded-md ${tab === 'hustles' ? 'bg-indigo-50' : ''}`}>Side Hustles</button>
+            </nav>
+          </aside>
+
+          <main className="lg:col-span-2 bg-white p-6 border rounded-lg">
+            {tab === "resume" && (
+              <div>
+                <h4 className="font-semibold mb-2">Resume + ATS Booster</h4>
+                <button onClick={handleAutoOptimize} className="px-4 py-2 bg-indigo-600 text-white rounded-md">Auto-Optimize</button>
+                {resumeSuggestions.length > 0 && (
+                  <ul className="mt-4 list-disc list-inside text-sm text-slate-700">
+                    {resumeSuggestions.map((s, i) => <li key={i}>{s}</li>)}
+                  </ul>
+                )}
+              </div>
+            )}
+            {tab === "overview" && <p>Overview content…</p>}
+            {tab === "skills" && <p>Skills training content…</p>}
+            {tab === "interview" && <p>Interview practice content…</p>}
+            {tab === "hustles" && <p>Side hustles content…</p>}
+          </main>
         </div>
       </section>
 
@@ -187,59 +202,16 @@ export default function CareerAIPreview() {
       <section className="max-w-7xl mx-auto px-6 py-12">
         <h3 className="text-2xl font-bold">Pricing</h3>
         <p className="text-slate-500 mt-2">Free, Pro and Premium plans designed for students and job-seekers.</p>
-
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 border rounded-xl bg-white text-center">
-            <p className="text-sm text-slate-400">Free</p>
-            <p className="text-2xl font-bold mt-2">$0</p>
-            <ul className="mt-4 text-sm space-y-2 text-slate-600">
-              <li>Basic resume tools</li>
-              <li>5 job applies/week</li>
-              <li>Limited mock interviews</li>
-            </ul>
-            <div className="mt-4">
-              <button className="px-4 py-2 border rounded-md">Get Started</button>
-            </div>
-          </div>
-
-          <div className="p-6 border rounded-xl bg-white text-center shadow-md">
-            <p className="text-sm text-slate-400">Pro</p>
-            <p className="text-2xl font-bold mt-2">$29 / mo</p>
-            <ul className="mt-4 text-sm space-y-2 text-slate-600">
-              <li>Unlimited tailored resumes</li>
-              <li>100 job applies/week (autopilot)</li>
-              <li>Full interview coach</li>
-            </ul>
-            <div className="mt-4">
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-md">Choose Pro</button>
-            </div>
-          </div>
-
-          <div className="p-6 border rounded-xl bg-white text-center">
-            <p className="text-sm text-slate-400">Premium</p>
-            <p className="text-2xl font-bold mt-2">$59 / mo</p>
-            <ul className="mt-4 text-sm space-y-2 text-slate-600">
-              <li>Everything in Pro</li>
-              <li>Side-hustle finder</li>
-              <li>Priority support + community boosts</li>
-            </ul>
-            <div className="mt-4">
-              <button className="px-4 py-2 border rounded-md">Choose Premium</button>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="p-6 border rounded-xl bg-white text-center">Free plan (non-functional)</div>
+          <div className="p-6 border rounded-xl bg-white text-center">Pro plan (non-functional)</div>
+          <div className="p-6 border rounded-xl bg-white text-center">Premium plan (non-functional)</div>
         </div>
       </section>
 
       {/* FOOTER */}
       <footer className="max-w-7xl mx-auto px-6 py-8 text-sm text-slate-500">
-        <div className="flex items-center justify-between">
-          <p>© {new Date().getFullYear()} CareerAI • Built for grads and job-seekers</p>
-          <div className="flex gap-4">
-            <p>Privacy</p>
-            <p>Terms</p>
-            <p>Contact</p>
-          </div>
-        </div>
+        <p>© {new Date().getFullYear()} CareerAI • Built for grads and job-seekers</p>
       </footer>
     </div>
   );
