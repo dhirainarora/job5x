@@ -33,7 +33,7 @@ export default function CareerAIPreview() {
     { title: "Side-Hustle Finder", desc: "Freelance gigs to start earning while you land your full-time role.", icon: Briefcase },
   ];
 
-  // Call Netlify Functions
+  // === Backend calls ===
   const handleAutoOptimize = async () => {
     try {
       const resp = await fetch("/.netlify/functions/resume-optimize", {
@@ -47,7 +47,7 @@ export default function CareerAIPreview() {
       const data = await resp.json();
       setResumeSuggestions(data.suggestions || []);
     } catch (err) {
-      alert("Error optimizing resume: " + err.message);
+      console.error(err);
     }
   };
 
@@ -61,9 +61,16 @@ export default function CareerAIPreview() {
       const data = await resp.json();
       setAutopilotResults(data.results || []);
     } catch (err) {
-      alert("Error with autopilot: " + err.message);
+      console.error(err);
     }
   };
+
+  // === Filter jobs by search ===
+  const filteredJobs = mockJobs.filter(
+    (j) =>
+      j.title.toLowerCase().includes(search.toLowerCase()) ||
+      j.company.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
@@ -99,33 +106,11 @@ export default function CareerAIPreview() {
             <button className="px-6 py-3 rounded-md bg-indigo-600 text-white font-medium shadow hover:scale-[1.01]">Start Free</button>
             <button className="px-6 py-3 rounded-md border border-slate-200 text-slate-700">See Demo</button>
           </div>
-
-          <div className="mt-8 bg-slate-50 border border-slate-100 p-4 rounded-lg">
-            <div className="flex items-center gap-4">
-              <div className="p-2 rounded-md bg-white shadow-sm">
-                <CheckCircle className="text-indigo-600" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-500">Success story</p>
-                <p className="text-sm font-semibold">"Landed a job in 3 weeks with CareerAI" — Ayesha, 2025 grad</p>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Hero Right: Dashboard preview */}
+        {/* Hero Right */}
         <motion.div initial={{ scale: 0.98, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.15 }} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs text-slate-400">Active Applications</p>
-              <h3 className="font-semibold">3 in progress</h3>
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-slate-400">Next Mock</p>
-              <p className="font-semibold">Sep 25, 2025</p>
-            </div>
-          </div>
-
+          <h3 className="font-semibold">Active Applications</h3>
           <div className="mt-4 space-y-3">
             {mockJobs.map((j) => (
               <div key={j.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-50">
@@ -133,52 +118,61 @@ export default function CareerAIPreview() {
                   <p className="font-medium">{j.title}</p>
                   <p className="text-xs text-slate-400">{j.company} • {j.date}</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-slate-400">ATS</p>
-                  <p className={`font-semibold ${j.ats > 85 ? 'text-emerald-600' : j.ats > 75 ? 'text-amber-600' : 'text-rose-600'}`}>{j.ats}%</p>
-                </div>
+                <p className={`font-semibold ${j.ats > 85 ? 'text-emerald-600' : j.ats > 75 ? 'text-amber-600' : 'text-rose-600'}`}>{j.ats}%</p>
               </div>
             ))}
           </div>
+          <button onClick={handleAutopilot} className="mt-4 w-full py-2 rounded-md bg-indigo-600 text-white">Run Autopilot</button>
 
-          <div className="mt-4 flex gap-2">
-            <button onClick={handleAutopilot} className="flex-1 py-2 rounded-md bg-indigo-600 text-white">Open Dashboard</button>
-            <button className="py-2 px-3 rounded-md border">Export</button>
-          </div>
-
-          {/* Show Autopilot results in UI */}
+          {/* Show Autopilot results */}
           {autopilotResults.length > 0 && (
             <div className="mt-4 bg-slate-50 border rounded-lg p-4">
               <h4 className="font-semibold mb-2">Autopilot Results</h4>
-              <ul className="space-y-2">
-                {autopilotResults.map((r) => (
-                  <li key={r.id} className="p-2 bg-white rounded-md flex justify-between">
-                    <span>{r.title} @ {r.company}</span>
-                    <span className={r.applied ? "text-emerald-600" : "text-rose-600"}>
-                      {r.applied ? "✅ Applied" : "❌ Skipped"}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              {autopilotResults.map((r) => (
+                <div key={r.id} className="flex justify-between py-1">
+                  <span>{r.title} @ {r.company}</span>
+                  <span className={r.applied ? "text-emerald-600" : "text-rose-600"}>
+                    {r.applied ? "✅ Applied" : "❌ Skipped"}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
         </motion.div>
       </section>
 
-      {/* DASHBOARD TABS */}
+      {/* DASHBOARD */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <aside className="col-span-1 bg-white border rounded-lg p-4 shadow-sm">
+          <aside className="bg-white border rounded-lg p-4 shadow-sm">
             <nav className="space-y-2">
-              <button onClick={() => setTab("overview")} className={`w-full text-left p-2 rounded-md ${tab === 'overview' ? 'bg-indigo-50' : ''}`}>Overview</button>
-              <button onClick={() => setTab("resume")} className={`w-full text-left p-2 rounded-md ${tab === 'resume' ? 'bg-indigo-50' : ''}`}>Resume</button>
-              <button onClick={() => setTab("skills")} className={`w-full text-left p-2 rounded-md ${tab === 'skills' ? 'bg-indigo-50' : ''}`}>Skills</button>
-              <button onClick={() => setTab("interview")} className={`w-full text-left p-2 rounded-md ${tab === 'interview' ? 'bg-indigo-50' : ''}`}>Interview</button>
-              <button onClick={() => setTab("hustles")} className={`w-full text-left p-2 rounded-md ${tab === 'hustles' ? 'bg-indigo-50' : ''}`}>Side Hustles</button>
+              <button onClick={() => setTab("overview")} className={`w-full p-2 rounded-md ${tab === 'overview' ? 'bg-indigo-50' : ''}`}>Overview</button>
+              <button onClick={() => setTab("resume")} className={`w-full p-2 rounded-md ${tab === 'resume' ? 'bg-indigo-50' : ''}`}>Resume</button>
+              <button onClick={() => setTab("skills")} className={`w-full p-2 rounded-md ${tab === 'skills' ? 'bg-indigo-50' : ''}`}>Skills</button>
             </nav>
           </aside>
 
           <main className="lg:col-span-2 bg-white p-6 border rounded-lg">
+            {tab === "overview" && (
+              <div>
+                <h4 className="font-semibold">Overview</h4>
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search jobs..."
+                  className="mt-2 w-full border p-2 rounded-md"
+                />
+                <div className="mt-4 space-y-3">
+                  {filteredJobs.map((j) => (
+                    <div key={j.id} className="flex justify-between p-3 bg-slate-50 rounded-lg">
+                      <span>{j.title} @ {j.company}</span>
+                      <span>{j.ats}% ATS</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {tab === "resume" && (
               <div>
                 <h4 className="font-semibold mb-2">Resume + ATS Booster</h4>
@@ -190,10 +184,8 @@ export default function CareerAIPreview() {
                 )}
               </div>
             )}
-            {tab === "overview" && <p>Overview content…</p>}
-            {tab === "skills" && <p>Skills training content…</p>}
-            {tab === "interview" && <p>Interview practice content…</p>}
-            {tab === "hustles" && <p>Side hustles content…</p>}
+
+            {tab === "skills" && <p>Skill lessons will load here…</p>}
           </main>
         </div>
       </section>
@@ -201,12 +193,7 @@ export default function CareerAIPreview() {
       {/* PRICING */}
       <section className="max-w-7xl mx-auto px-6 py-12">
         <h3 className="text-2xl font-bold">Pricing</h3>
-        <p className="text-slate-500 mt-2">Free, Pro and Premium plans designed for students and job-seekers.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="p-6 border rounded-xl bg-white text-center">Free plan (non-functional)</div>
-          <div className="p-6 border rounded-xl bg-white text-center">Pro plan (non-functional)</div>
-          <div className="p-6 border rounded-xl bg-white text-center">Premium plan (non-functional)</div>
-        </div>
+        <p className="text-slate-500 mt-2">Free, Pro and Premium plans (demo only)</p>
       </section>
 
       {/* FOOTER */}
